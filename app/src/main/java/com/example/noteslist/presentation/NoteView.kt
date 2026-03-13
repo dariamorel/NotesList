@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import com.example.noteslist.R
@@ -31,7 +32,8 @@ class NoteView @JvmOverloads constructor(
     private val titleRectColor = "#62abf0".toColorInt()
     private val textHorizontalPadding = 8f
     private val textVerticalPadding = 16f
-    private val titleTextSize = 40f
+    private val titleTextSize = 30f
+    private val starSize = 40f
     private val starColor = "#ebc12a".toColorInt()
 
     // Геометрия
@@ -48,6 +50,7 @@ class NoteView @JvmOverloads constructor(
     private val backgroundPaint = Paint().apply { isAntiAlias = true }
     private val titleRectPaint = Paint().apply { isAntiAlias = true }
     private val starPaint = Paint().apply { isAntiAlias = true }
+    private val titlePaint = Paint().apply { isAntiAlias = true }
 
     init {
         initAttrs(attrs, defStyleAttr, defStyleRes)
@@ -78,7 +81,12 @@ class NoteView @JvmOverloads constructor(
         starPaint.apply {
             style = Paint.Style.FILL
             color = starColor
+            textSize = starSize
+        }
+        titlePaint.apply {
             textSize = titleTextSize
+            typeface = Typeface.DEFAULT_BOLD
+            color = Color.BLACK
         }
     }
 
@@ -131,5 +139,10 @@ class NoteView @JvmOverloads constructor(
         val starBaseline = starRect.centerY() + starSize / 3
         val star = if (note?.isImportant ?: false) "★" else "☆"
         canvas.drawText(star, starX, starBaseline, starPaint)
+
+        // Текст
+        val titleX = starRect.right + textHorizontalPadding
+        val titleBaseline = starBaseline
+        canvas.drawText(note?.title ?: "", titleX, titleBaseline, titlePaint)
     }
 }
