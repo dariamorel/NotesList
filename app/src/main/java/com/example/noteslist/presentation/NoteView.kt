@@ -29,11 +29,16 @@ class NoteView @JvmOverloads constructor(
     private val defaultCornerRadius = 16f
     private val defaultBackgroundColor = "#edf1f5".toColorInt()
     private val titleRectColor = "#62abf0".toColorInt()
+    private val textHorizontalPadding = 8f
+    private val textVerticalPadding = 16f
+    private val titleTextSize = 40f
+    private val starColor = "#ebc12a".toColorInt()
 
     // Геометрия
     private val frameRect = RectF()
     private val titleFrameRect = RectF()
     private val titleFrameStroke = RectF()
+    private val starRect = RectF()
 
     // Стейт
     private var cornerRadius = defaultCornerRadius
@@ -42,6 +47,7 @@ class NoteView @JvmOverloads constructor(
     // Paint
     private val backgroundPaint = Paint().apply { isAntiAlias = true }
     private val titleRectPaint = Paint().apply { isAntiAlias = true }
+    private val starPaint = Paint().apply { isAntiAlias = true }
 
     init {
         initAttrs(attrs, defStyleAttr, defStyleRes)
@@ -68,6 +74,11 @@ class NoteView @JvmOverloads constructor(
         titleRectPaint.apply {
             style = Paint.Style.FILL
             color = titleRectColor
+        }
+        starPaint.apply {
+            style = Paint.Style.FILL
+            color = starColor
+            textSize = titleTextSize
         }
     }
 
@@ -97,13 +108,28 @@ class NoteView @JvmOverloads constructor(
             titleFrameRect.right,
             titleFrameRect.bottom + cornerRadius
         )
+        val starSize = titleFrameStroke.bottom - titleFrameRect.top - textVerticalPadding * 2
+        starRect.set(
+            titleFrameRect.left + textHorizontalPadding,
+            titleFrameRect.top + textVerticalPadding,
+            titleFrameRect.left + textHorizontalPadding + starSize,
+            titleFrameRect.top + textVerticalPadding + starSize
+        )
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         updateGeometry()
+        // Фон
         canvas.drawRoundRect(frameRect, cornerRadius, cornerRadius, backgroundPaint)
         canvas.drawRoundRect(titleFrameRect, cornerRadius, cornerRadius, titleRectPaint)
         canvas.drawRect(titleFrameStroke, titleRectPaint)
+
+        // Звезда
+        val starSize = starPaint.textSize
+        val starX = starRect.centerX() - starSize / 2
+        val starBaseline = starRect.centerY() + starSize / 3
+        val star = if (note?.isImportant ?: false) "★" else "☆"
+        canvas.drawText(star, starX, starBaseline, starPaint)
     }
 }

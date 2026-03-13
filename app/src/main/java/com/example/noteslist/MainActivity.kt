@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val note = NotesRepository.notesList.first()
+        val note = NotesRepository.notesList[1]
         binding.noteView.setNote(note)
     }
 }
