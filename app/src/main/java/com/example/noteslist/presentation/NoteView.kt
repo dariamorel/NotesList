@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
@@ -26,10 +27,13 @@ class NoteView @JvmOverloads constructor(
 
     // Значения по умолчанию
     private val defaultCornerRadius = 16f
-    private val defaultBackgroundColor = "#f0f3fa".toColorInt()
+    private val defaultBackgroundColor = "#edf1f5".toColorInt()
+    private val titleRectColor = "#62abf0".toColorInt()
 
     // Геометрия
     private val frameRect = RectF()
+    private val titleFrameRect = RectF()
+    private val titleFrameStroke = RectF()
 
     // Стейт
     private var cornerRadius = defaultCornerRadius
@@ -37,6 +41,7 @@ class NoteView @JvmOverloads constructor(
 
     // Paint
     private val backgroundPaint = Paint().apply { isAntiAlias = true }
+    private val titleRectPaint = Paint().apply { isAntiAlias = true }
 
     init {
         initAttrs(attrs, defStyleAttr, defStyleRes)
@@ -60,6 +65,10 @@ class NoteView @JvmOverloads constructor(
             style = Paint.Style.FILL
             color = backgroundColor
         }
+        titleRectPaint.apply {
+            style = Paint.Style.FILL
+            color = titleRectColor
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -74,11 +83,27 @@ class NoteView @JvmOverloads constructor(
             (width - paddingRight).toFloat(),
             (height - paddingBottom).toFloat()
         )
+        val rectHeight = height - paddingLeft - paddingRight
+        val titleRectHeight = rectHeight / 4
+        titleFrameRect.set(
+            frameRect.left,
+            frameRect.top,
+            frameRect.right,
+            (paddingTop + titleRectHeight).toFloat()
+        )
+        titleFrameStroke.set(
+            titleFrameRect.left,
+            titleFrameRect.bottom - cornerRadius,
+            titleFrameRect.right,
+            titleFrameRect.bottom + cornerRadius
+        )
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         updateGeometry()
         canvas.drawRoundRect(frameRect, cornerRadius, cornerRadius, backgroundPaint)
+        canvas.drawRoundRect(titleFrameRect, cornerRadius, cornerRadius, titleRectPaint)
+        canvas.drawRect(titleFrameStroke, titleRectPaint)
     }
 }
