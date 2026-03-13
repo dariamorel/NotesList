@@ -4,7 +4,7 @@ import com.example.noteslist.domain.Note
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-class NotesRepository {
+object NotesRepository {
     private var _notesList = mutableListOf(
         Note(
             title = "Погулять с собакой",
