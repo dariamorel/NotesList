@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="title_rect_height">30dp</dimen>
+    <dimen name="star_size">24sp</dimen>
+    <dimen name="title_size">16sp</dimen>
+    <dimen name="body_size">14sp</dimen>
+    <dimen name="time_size">12sp</dimen>
+    <dimen name="text_horizontal_padding">8dp</dimen>
+    <dimen name="text_vertical_padding">16dp</dimen>
+    <dimen name="default_corner_radius">16dp</dimen>
+</resources>
