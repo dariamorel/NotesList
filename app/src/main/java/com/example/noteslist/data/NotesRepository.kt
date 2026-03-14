@@ -15,7 +15,8 @@ object NotesRepository {
             title = "Сделать курсач",
             body = "Созвониться с научником, доделать важные задачи, подготовить презентацию, подправить код в проекте",
             createTime = OffsetDateTime.of(2026, 3, 12, 21, 20, 0, 0, ZoneOffset.ofHours(3)),
-            isImportant = true
+            isImportant = true,
+            isRead = false
         ),
         Note(
             title = "Бильярд",

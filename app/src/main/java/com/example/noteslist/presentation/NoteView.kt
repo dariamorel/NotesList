@@ -11,7 +11,9 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.component1
 import com.example.noteslist.R
 import androidx.core.graphics.toColorInt
 import com.example.noteslist.domain.Note
@@ -29,6 +31,7 @@ class NoteView @JvmOverloads constructor(
 
     fun setNote(note: Note) {
         this.note = note
+        initPaints()
     }
 
     // Значения по умолчанию
@@ -39,6 +42,8 @@ class NoteView @JvmOverloads constructor(
     private val starColor = "#ebc12a".toColorInt()
     private val checkCircleColor = "#40962a".toColorInt()
     private val checkColor = Color.WHITE
+    private val readTextColor = Color.LTGRAY
+    private val readBackgroundColor = "#e8e8e8".toColorInt()
 
     // Инициализируются в init
     private var titleRectHeight = 0f
@@ -75,6 +80,9 @@ class NoteView @JvmOverloads constructor(
     private val checkPaint = TextPaint().apply { isAntiAlias = true }
     private lateinit var bodyLayout: StaticLayout
 
+    // Callback
+    private var callback: OnChangeListener? = null
+
     init {
         initDimensions()
         initAttrs(attrs, defStyleAttr, defStyleRes)
@@ -98,11 +106,11 @@ class NoteView @JvmOverloads constructor(
     private fun initPaints() {
         backgroundPaint.apply {
             style = Paint.Style.FILL
-            color = backgroundColor
+            color = if (note?.isRead ?: false) readBackgroundColor else backgroundColor
         }
         titleRectPaint.apply {
             style = Paint.Style.FILL
-            color = titleRectColor
+            color = if (note?.isRead ?: false) readBackgroundColor else titleRectColor
         }
         starPaint.apply {
             style = Paint.Style.FILL
@@ -112,17 +120,17 @@ class NoteView @JvmOverloads constructor(
         titlePaint.apply {
             textSize = titleSize
             typeface = Typeface.DEFAULT_BOLD
-            color = textColor
+            color = if (note?.isRead ?: false) readTextColor else textColor
         }
         bodyPaint.apply {
             textSize = bodySize
             typeface = Typeface.DEFAULT
-            color = textColor
+            color = if (note?.isRead ?: false) readTextColor else textColor
         }
         timePaint.apply {
             textSize = timeSize
             typeface = Typeface.DEFAULT
-            color = textColor
+            color = if (note?.isRead ?: false) readTextColor else textColor
         }
         checkCirclePaint.apply {
             style = Paint.Style.FILL
@@ -232,9 +240,51 @@ class NoteView @JvmOverloads constructor(
         canvas.drawText(createTime, timeX, timeBaseline, timePaint)
 
         // Круг с галочкой
-        canvas.drawCircle(checkRect.centerX(), checkRect.centerY(), checkSize / 2, checkCirclePaint)
-        val checkX = checkRect.centerX() - checkSize / 3
-        val checkBaseline = checkRect.bottom - checkSize / 4
-        canvas.drawText("✓", checkX, checkBaseline, checkPaint)
+        if (note?.isRead ?: false) {
+            canvas.drawCircle(
+                checkRect.centerX(),
+                checkRect.centerY(),
+                checkSize / 2,
+                checkCirclePaint
+            )
+            val checkX = checkRect.centerX() - checkSize / 3
+            val checkBaseline = checkRect.bottom - checkSize / 4
+            canvas.drawText("✓", checkX, checkBaseline, checkPaint)
+        }
+    }
+
+    fun setOnChangeListener(callback: OnChangeListener) {
+        this.callback = callback
+    }
+
+    interface OnChangeListener {
+        fun onImportanceChanged(isImportant: Boolean)
+        fun onReadChanged(isRead: Boolean)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val touchX = event.x
+        val touchY = event.y
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (starRect.contains(touchX, touchY)) {
+                    val isImportant = note?.isImportant ?: false
+                    note = note?.copy(isImportant = !isImportant)
+                    callback?.onImportanceChanged(!isImportant)
+                    invalidate()
+                    return true
+                }
+                if (frameRect.contains(touchX, touchY) && !(note?.isRead ?: false)) {
+                    note = note?.copy(isRead = true)
+                    callback?.onReadChanged(true)
+                    initPaints()
+                    invalidate()
+                    return true
+                }
+            }
+        }
+
+        return super.onTouchEvent(event)
     }
 }
