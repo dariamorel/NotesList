@@ -37,7 +37,7 @@ class NoteView @JvmOverloads constructor(
     // Значения по умолчанию
     private val defaultBackgroundColor = "#edf1f5".toColorInt()
     private val defaultTextColor = Color.BLACK
-    private val defaultElevation = 0f
+    private val defaultElevation = 6f
     private val titleRectColor = "#62abf0".toColorInt()
     private val starColor = "#ebc12a".toColorInt()
     private val checkCircleColor = "#40962a".toColorInt()
@@ -58,6 +58,7 @@ class NoteView @JvmOverloads constructor(
 
     // Геометрия
     private val frameRect = RectF()
+    private val shadowRect = RectF()
     private val titleFrameRect = RectF()
     private val titleFrameStroke = RectF()
     private val starRect = RectF()
@@ -67,7 +68,7 @@ class NoteView @JvmOverloads constructor(
     private var cornerRadius = defaultCornerRadius
     private var backgroundColor = defaultBackgroundColor
     private var textColor = defaultTextColor
-    private var elevation = defaultElevation
+    private var elevationSize = defaultElevation
 
     // Paint
     private val backgroundPaint = Paint().apply { isAntiAlias = true }
@@ -78,6 +79,7 @@ class NoteView @JvmOverloads constructor(
     private val timePaint = TextPaint().apply { isAntiAlias = true }
     private val checkCirclePaint = Paint().apply { isAntiAlias = true }
     private val checkPaint = TextPaint().apply { isAntiAlias = true }
+    private val shadowPaint = Paint().apply { isAntiAlias = true }
     private lateinit var bodyLayout: StaticLayout
 
     // Callback
@@ -96,7 +98,7 @@ class NoteView @JvmOverloads constructor(
                 backgroundColor = typedArray.getColor(R.styleable.NoteView_noteBackgroundColor, defaultBackgroundColor)
                 textColor = typedArray.getColor(R.styleable.NoteView_noteTextColor, defaultTextColor)
                 cornerRadius = typedArray.getDimension(R.styleable.NoteView_noteCornerRadius, defaultCornerRadius)
-                elevation = typedArray.getDimension(R.styleable.NoteView_noteElevation, defaultElevation)
+                elevationSize = typedArray.getDimension(R.styleable.NoteView_noteElevation, defaultElevation)
             } finally {
                 typedArray.recycle()
             }
@@ -141,6 +143,10 @@ class NoteView @JvmOverloads constructor(
             typeface = Typeface.DEFAULT
             color = checkColor
         }
+        shadowPaint.apply {
+            style = Paint.Style.FILL
+            color = Color.argb(15, 0, 0, 0)
+        }
     }
 
     private fun initDimensions() {
@@ -164,11 +170,17 @@ class NoteView @JvmOverloads constructor(
     }
 
     private fun updateGeometry() {
-        frameRect.set(
+        shadowRect.set(
             paddingLeft.toFloat(),
             paddingTop.toFloat(),
             (width - paddingRight).toFloat(),
             (height - paddingBottom).toFloat()
+        )
+        frameRect.set(
+            shadowRect.left,
+            shadowRect.top,
+            shadowRect.right - elevationSize,
+            shadowRect.bottom - elevationSize
         )
         titleFrameRect.set(
             frameRect.left,
@@ -212,6 +224,9 @@ class NoteView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         updateGeometry()
+        // Тень
+        canvas.drawRoundRect(shadowRect, cornerRadius, cornerRadius, shadowPaint)
+
         // Фон
         canvas.drawRoundRect(frameRect, cornerRadius, cornerRadius, backgroundPaint)
         canvas.drawRoundRect(titleFrameRect, cornerRadius, cornerRadius, titleRectPaint)
