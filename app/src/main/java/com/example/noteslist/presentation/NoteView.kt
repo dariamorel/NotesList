@@ -55,6 +55,8 @@ class NoteView @JvmOverloads constructor(
     private var textVerticalPadding = 0f
     private var defaultCornerRadius = 0f
     private var defaultElevation = 0f
+    private var defaultNoteWidth = 0
+    private var defaultNoteHeight = 0
 
     // Геометрия
     private val frameRect = RectF()
@@ -91,6 +93,11 @@ class NoteView @JvmOverloads constructor(
         initPaints()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val measuredWidth = resolveSize(defaultNoteWidth, widthMeasureSpec)
+        val measuredHeight = resolveSize(defaultNoteHeight, heightMeasureSpec)
+        setMeasuredDimension(measuredWidth, measuredHeight)
+    }
     private fun initAttrs(attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NoteView, defStyleAttr, defStyleRes)
@@ -183,6 +190,8 @@ class NoteView @JvmOverloads constructor(
             textVerticalPadding = getDimension(R.dimen.text_vertical_padding)
             defaultCornerRadius = getDimension(R.dimen.default_corner_radius)
             defaultElevation = getDimension(R.dimen.default_elevation)
+            defaultNoteWidth = getDimension(R.dimen.default_note_width).toInt()
+            defaultNoteHeight = getDimension(R.dimen.default_note_height).toInt()
         }
     }
 

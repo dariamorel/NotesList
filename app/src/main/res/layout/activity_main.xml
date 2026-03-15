@@ -5,13 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.noteslist.presentation.NoteView
-        android:id="@+id/noteView"
-        android:layout_width="300.dp"
-        android:layout_height="150.dp"
+    <com.example.noteslist.presentation.NoteStackView
+        android:id="@+id/stack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.example.noteslist.presentation.NoteView
+            android:id="@+id/note1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.example.noteslist.presentation.NoteView
+            android:id="@+id/note2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.example.noteslist.presentation.NoteView
+            android:id="@+id/note3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </com.example.noteslist.presentation.NoteStackView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
