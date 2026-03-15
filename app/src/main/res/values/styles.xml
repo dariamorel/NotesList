@@ -1,2 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <style name="NoteStyle" parent="">
+        <item name="noteBackgroundColor">#edf1f5</item>
+        <item name="noteTextColor">#000</item>
+        <item name="noteCornerRadius">16dp</item>
+        <item name="noteElevation">3dp</item>
+    </style>
+
+    <style name="NoteStyle.NotRead" parent="">
+        <item name="noteBackgroundColor">#edf1f5</item>
+        <item name="noteTextColor">#000</item>
+        <item name="noteCornerRadius">16dp</item>
+        <item name="noteElevation">3dp</item>
+    </style>
+
+    <style name="NoteStyle.Read" parent="">
+        <item name="noteBackgroundColor">#e3e3e3</item>
+        <item name="noteTextColor">#949494</item>
+        <item name="noteCornerRadius">16dp</item>
+        <item name="noteElevation">3dp</item>
+    </style>
+</resources>

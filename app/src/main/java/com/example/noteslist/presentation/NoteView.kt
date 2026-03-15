@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.component1
 import com.example.noteslist.R
 import androidx.core.graphics.toColorInt
@@ -31,19 +32,17 @@ class NoteView @JvmOverloads constructor(
 
     fun setNote(note: Note) {
         this.note = note
+        applyStyle()
         initPaints()
     }
 
     // Значения по умолчанию
-    private val defaultBackgroundColor = "#edf1f5".toColorInt()
-    private val defaultTextColor = Color.BLACK
-    private val defaultElevation = 6f
-    private val titleRectColor = "#62abf0".toColorInt()
-    private val starColor = "#ebc12a".toColorInt()
-    private val checkCircleColor = "#40962a".toColorInt()
-    private val checkColor = Color.WHITE
-    private val readTextColor = Color.LTGRAY
-    private val readBackgroundColor = "#e8e8e8".toColorInt()
+    private val defaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background_color)
+    private val defaultTextColor = ContextCompat.getColor(context, R.color.default_text_color)
+    private val titleRectColor = ContextCompat.getColor(context, R.color.title_rect_color)
+    private val starColor = ContextCompat.getColor(context, R.color.star_color)
+    private val checkCircleColor = ContextCompat.getColor(context, R.color.check_circle_color)
+    private val checkColor =  ContextCompat.getColor(context, R.color.check_color)
 
     // Инициализируются в init
     private var titleRectHeight = 0f
@@ -55,6 +54,7 @@ class NoteView @JvmOverloads constructor(
     private var textHorizontalPadding = 0f
     private var textVerticalPadding = 0f
     private var defaultCornerRadius = 0f
+    private var defaultElevation = 0f
 
     // Геометрия
     private val frameRect = RectF()
@@ -93,7 +93,7 @@ class NoteView @JvmOverloads constructor(
 
     private fun initAttrs(attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.NoteView, defStyleAttr, defStyleRes)
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NoteView, defStyleAttr, defStyleRes)
             try {
                 backgroundColor = typedArray.getColor(R.styleable.NoteView_noteBackgroundColor, defaultBackgroundColor)
                 textColor = typedArray.getColor(R.styleable.NoteView_noteTextColor, defaultTextColor)
@@ -105,14 +105,35 @@ class NoteView @JvmOverloads constructor(
         }
     }
 
+    private fun applyStyle() {
+        val styleRes = if (note?.isRead ?: false) R.style.NoteStyle_Read else R.style.NoteStyle_NotRead
+        val typedArray = context.obtainStyledAttributes(styleRes, R.styleable.NoteView)
+        try {
+            if (backgroundColor == defaultBackgroundColor) {
+                backgroundColor = typedArray.getColor(
+                    R.styleable.NoteView_noteBackgroundColor,
+                    backgroundColor
+                )
+            }
+            if (textColor == defaultTextColor) {
+                textColor = typedArray.getColor(
+                    R.styleable.NoteView_noteTextColor,
+                    textColor
+                )
+            }
+        } finally {
+            typedArray.recycle()
+        }
+    }
+
     private fun initPaints() {
         backgroundPaint.apply {
             style = Paint.Style.FILL
-            color = if (note?.isRead ?: false) readBackgroundColor else backgroundColor
+            color = backgroundColor
         }
         titleRectPaint.apply {
             style = Paint.Style.FILL
-            color = if (note?.isRead ?: false) readBackgroundColor else titleRectColor
+            color = titleRectColor
         }
         starPaint.apply {
             style = Paint.Style.FILL
@@ -122,17 +143,17 @@ class NoteView @JvmOverloads constructor(
         titlePaint.apply {
             textSize = titleSize
             typeface = Typeface.DEFAULT_BOLD
-            color = if (note?.isRead ?: false) readTextColor else textColor
+            color = textColor
         }
         bodyPaint.apply {
             textSize = bodySize
             typeface = Typeface.DEFAULT
-            color = if (note?.isRead ?: false) readTextColor else textColor
+            color = textColor
         }
         timePaint.apply {
             textSize = timeSize
             typeface = Typeface.DEFAULT
-            color = if (note?.isRead ?: false) readTextColor else textColor
+            color = textColor
         }
         checkCirclePaint.apply {
             style = Paint.Style.FILL
@@ -161,6 +182,7 @@ class NoteView @JvmOverloads constructor(
             textHorizontalPadding = getDimension(R.dimen.text_horizontal_padding)
             textVerticalPadding = getDimension(R.dimen.text_vertical_padding)
             defaultCornerRadius = getDimension(R.dimen.default_corner_radius)
+            defaultElevation = getDimension(R.dimen.default_elevation)
         }
     }
 
@@ -293,6 +315,7 @@ class NoteView @JvmOverloads constructor(
                 if (frameRect.contains(touchX, touchY) && !(note?.isRead ?: false)) {
                     note = note?.copy(isRead = true)
                     callback?.onReadChanged(true)
+                    applyStyle()
                     initPaints()
                     invalidate()
                     return true
