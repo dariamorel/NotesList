@@ -16,12 +16,13 @@ import kotlin.math.max
 import kotlin.math.min
 import androidx.core.view.isGone
 import com.example.noteslist.presentation.NoteView.OnChangeListener
+import kotlin.Int
 
 class NoteStackView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private var isExpanded = false
 
@@ -46,6 +47,7 @@ class NoteStackView @JvmOverloads constructor(
     init {
         setWillNotDraw(false)
         initDimensions()
+        initAttrs(attrs, defStyleAttr, defStyleRes)
         initPaints()
     }
 
@@ -65,6 +67,18 @@ class NoteStackView @JvmOverloads constructor(
             textSize = backButtonSize
             typeface = Typeface.DEFAULT
             color = defaultTextColor
+        }
+    }
+
+    private fun initAttrs(attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
+        attrs?.let {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NoteStackView, defStyleAttr, defStyleRes)
+            try {
+                stackSpacing = typedArray.getDimension(R.styleable.NoteStackView_stackSpacing, defaultStackSpacing)
+                stackMaxVisible = typedArray.getInteger(R.styleable.NoteStackView_stackMaxVisible, defaultStackMaxVisible)
+            } finally {
+                typedArray.recycle()
+            }
         }
     }
 
