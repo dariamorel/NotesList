@@ -1,10 +1,15 @@
 package com.example.noteslist.presentation
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.RectF
+import android.graphics.Typeface
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
 import kotlin.math.max
@@ -23,17 +28,25 @@ class NoteStackView @JvmOverloads constructor(
     // Значения по умолчанию
     private var defaultStackSpacing = 0f
     private var defaultStackMaxVisible = 6
+    private var defaultTextColor = ContextCompat.getColor(context, R.color.default_text_color)
 
     // Стейт
     private var stackSpacing = defaultStackSpacing
     private var stackMaxVisible = defaultStackMaxVisible
     private var stackVerticalSpacing = 0f
+    private var backButtonSize = 0f
+
+    // Геометрия
+    private val backButtonRect = RectF()
+    private val backButtonPaint = TextPaint().apply { isAntiAlias = true }
 
     // Callback
     private var callback: OnChangeListener? = null
 
     init {
+        setWillNotDraw(false)
         initDimensions()
+        initPaints()
     }
 
     private fun initDimensions() {
@@ -43,6 +56,15 @@ class NoteStackView @JvmOverloads constructor(
             stackSpacing = defaultStackSpacing
             stackMaxVisible = defaultStackMaxVisible
             stackVerticalSpacing = getDimension(R.dimen.stack_vertical_spacing)
+            backButtonSize = getDimension(R.dimen.back_button_size)
+        }
+    }
+
+    private fun initPaints() {
+        backButtonPaint.apply {
+            textSize = backButtonSize
+            typeface = Typeface.DEFAULT
+            color = defaultTextColor
         }
     }
 
@@ -78,8 +100,9 @@ class NoteStackView @JvmOverloads constructor(
            prevChildWidth = childTotalWidth.toFloat()
        }
        if (isExpanded) {
-           totalHeight += stackVerticalSpacing * (childCount - 1)
+           totalHeight += stackVerticalSpacing * childCount
            totalWidth = maxWidth
+           totalHeight += backButtonSize
        }
 
        val measuredWidth = resolveSize(totalWidth.toInt(), widthMeasureSpec)
@@ -112,6 +135,13 @@ class NoteStackView @JvmOverloads constructor(
                child.layout(left, top, right, bottom)
                top += childTotalHeight + stackVerticalSpacing.toInt()
            }
+
+           backButtonRect.set(
+               paddingLeft.toFloat(),
+               top.toFloat(),
+               (width - paddingRight).toFloat(),
+               top + backButtonSize
+           )
        } else {
            val stackSpacingInt = stackSpacing.toInt()
            for (i in 0 until notesCount) {
@@ -131,13 +161,31 @@ class NoteStackView @JvmOverloads constructor(
        }
     }
 
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        if (isExpanded) {
+            canvas.drawText("<< Свернуть", backButtonRect.left, backButtonRect.centerY(), backButtonPaint)
+        }
+    }
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return !isExpanded
     }   
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        val touchX = event.x
+        val touchY = event.y
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                if (isExpanded && backButtonRect.contains(touchX, touchY)) {
+                    isExpanded = false
+                    callback?.onExpandedChanged(false)
+                    requestLayout()
+                    invalidate()
+                    return true
+                }
                 if (!isExpanded) {
                     isExpanded = true
                     callback?.onExpandedChanged(true)
