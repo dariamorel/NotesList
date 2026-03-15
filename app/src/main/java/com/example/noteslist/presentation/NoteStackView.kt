@@ -2,6 +2,7 @@ package com.example.noteslist.presentation
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.example.noteslist.R
@@ -9,6 +10,7 @@ import com.example.noteslist.domain.Note
 import kotlin.math.max
 import kotlin.math.min
 import androidx.core.view.isGone
+import com.example.noteslist.presentation.NoteView.OnChangeListener
 
 class NoteStackView @JvmOverloads constructor(
     context: Context,
@@ -16,7 +18,7 @@ class NoteStackView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 
 ) : ViewGroup(context, attrs, defStyleAttr) {
-    private val isExpanded = false
+    private var isExpanded = false
 
     // Значения по умолчанию
     private var defaultStackSpacing = 0f
@@ -26,6 +28,9 @@ class NoteStackView @JvmOverloads constructor(
     private var stackSpacing = defaultStackSpacing
     private var stackMaxVisible = defaultStackMaxVisible
     private var stackVerticalSpacing = 0f
+
+    // Callback
+    private var callback: OnChangeListener? = null
 
     init {
         initDimensions()
@@ -124,6 +129,34 @@ class NoteStackView @JvmOverloads constructor(
                child.layout(left, top, right, bottom)
            }
        }
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        return !isExpanded
+    }   
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (!isExpanded) {
+                    isExpanded = true
+                    callback?.onExpandedChanged(true)
+                    requestLayout()
+                    invalidate()
+                    return true
+                }
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
+
+    fun setOnChangeListener(callback: OnChangeListener) {
+        this.callback = callback
+    }
+
+    interface OnChangeListener {
+        fun onExpandedChanged(isExpanded: Boolean)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
