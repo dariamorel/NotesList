@@ -14,21 +14,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         val noteList = NotesRepository.notesList
-        binding.note1.setNote(noteList[0])
-        binding.note2.setNote(noteList[1])
-        binding.note3.setNote(noteList[2])
-        binding.note1.setOnChangeListener(Listener)
-        binding.note2.setOnChangeListener(Listener)
-        binding.note3.setOnChangeListener(Listener)
-
         setContentView(binding.root)
-    }
-
-    object Listener : NoteView.OnChangeListener {
-        override fun onImportanceChanged(isImportant: Boolean) {
-        }
-
-        override fun onReadChanged(isRead: Boolean) {
-        }
+        binding.stack.submitNotes(noteList)
     }
 }

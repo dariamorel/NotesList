@@ -67,10 +67,10 @@ class NoteView @JvmOverloads constructor(
     private val checkRect = RectF()
 
     // Стейт
-    private var cornerRadius = defaultCornerRadius
+    private var cornerRadius = 0f
     private var backgroundColor = defaultBackgroundColor
     private var textColor = defaultTextColor
-    private var elevationSize = defaultElevation
+    private var elevationSize = 0f
 
     // Paint
     private val backgroundPaint = Paint().apply { isAntiAlias = true }
@@ -193,6 +193,8 @@ class NoteView @JvmOverloads constructor(
             defaultNoteWidth = getDimension(R.dimen.default_note_width).toInt()
             defaultNoteHeight = getDimension(R.dimen.default_note_height).toInt()
         }
+        cornerRadius = defaultCornerRadius
+        elevationSize = defaultElevation
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

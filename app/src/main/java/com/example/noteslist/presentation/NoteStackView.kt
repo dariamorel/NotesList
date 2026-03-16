@@ -28,7 +28,7 @@ class NoteStackView @JvmOverloads constructor(
 
     // Значения по умолчанию
     private var defaultStackSpacing = 0f
-    private var defaultStackMaxVisible = 6
+    private var defaultStackMaxVisible = 4
     private var defaultTextColor = ContextCompat.getColor(context, R.color.default_text_color)
 
     // Стейт
@@ -49,6 +49,30 @@ class NoteStackView @JvmOverloads constructor(
         initDimensions()
         initAttrs(attrs, defStyleAttr, defStyleRes)
         initPaints()
+    }
+
+    fun submitNotes(notes: List<Note>) {
+        removeAllViews()
+
+        notes
+            .sortedBy { it.createTime }
+            .take(stackMaxVisible)
+            .forEach { note ->
+                val noteView = NoteView(context)
+                noteView.setNote(note)
+
+                noteView.setOnChangeListener(object : NoteView.OnChangeListener {
+                    override fun onImportanceChanged(isImportant: Boolean) {
+                    }
+
+                    override fun onReadChanged(isRead: Boolean) {
+                    }
+                })
+
+                addView(noteView)
+            }
+
+        requestLayout()
     }
 
     private fun initDimensions() {
@@ -136,7 +160,7 @@ class NoteStackView @JvmOverloads constructor(
        if (isExpanded) {
            val left = paddingLeft
            var top = paddingTop
-           for (i in 0 until notesCount) {
+           for (i in notesCount - 1 downTo 0) {
                val child = getChildAt(i)
                if (child.isGone) continue
 
