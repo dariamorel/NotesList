@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.data.NotesRepository
 import com.example.noteslist.databinding.ActivityMainBinding
 import com.example.noteslist.domain.Note
+import com.example.noteslist.domain.recyclerView.DateItem
 import com.example.noteslist.presentation.recyclerView.ImportantNoteDelegate
 import com.example.noteslist.domain.recyclerView.ImportantNoteItem
 import com.example.noteslist.presentation.recyclerView.NoteStackDelegate
 import com.example.noteslist.domain.recyclerView.NoteStackItem
 import com.example.noteslist.presentation.recyclerView.NotesAdapter
 import com.example.noteslist.domain.recyclerView.NotesItem
+import com.example.noteslist.presentation.recyclerView.DateHeaderDelegate
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -30,7 +32,8 @@ class MainActivity : AppCompatActivity() {
         val adapter = NotesAdapter(
             listOf(
                 ImportantNoteDelegate(),
-                NoteStackDelegate()
+                NoteStackDelegate(),
+                DateHeaderDelegate()
             )
         )
         adapter.submitItems(items)
@@ -54,22 +57,28 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-}
 
-fun mapNotesToItems(notes: List<Note>): List<NotesItem> {
+    private fun mapNotesToItems(notes: List<Note>): List<NotesItem> {
 
-    val result = mutableListOf<NotesItem>()
+        val grouped = notes.groupBy { it.createTime.toLocalDate() }
 
-    val important = notes.filter { it.isImportant }
-    val normal = notes.filter { !it.isImportant }
+        val result = mutableListOf<NotesItem>()
 
-    important.forEach {
-        result.add(ImportantNoteItem(it))
+        grouped.keys.sortedDescending().forEach { date ->
+            result.add(DateItem(date))
+
+            val notesForDate = grouped[date]!!
+
+            notesForDate.filter { it.isImportant }.forEach { note ->
+                result.add(ImportantNoteItem(note))
+            }
+
+            val normalNotes = notesForDate.filter { !it.isImportant }
+            if (normalNotes.isNotEmpty()) {
+                result.add(NoteStackItem(normalNotes))
+            }
+        }
+
+        return result
     }
-
-    if (normal.isNotEmpty()) {
-        result.add(NoteStackItem(normal))
-    }
-
-    return result
 }

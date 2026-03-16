@@ -32,13 +32,15 @@ object NotesRepository {
         Note(
             title = "Сходить за продуктами",
             body = "Список: молоко, чай, кофе, вафли",
-            createTime = OffsetDateTime.of(2026, 3, 13, 15, 23, 0, 0, ZoneOffset.ofHours(3))
+            createTime = OffsetDateTime.of(2026, 3, 13, 15, 23, 0, 0, ZoneOffset.ofHours(3)),
+            isImportant = true
         ),
         Note(
             title = "Врач",
             body = "Среда 15:30",
             createTime = OffsetDateTime.of(2026, 3, 13, 16, 0, 0, 0, ZoneOffset.ofHours(3)),
-            isImportant = true
+            isImportant = true,
+            isRead = true
         )
     )
     val notesList = _notesList.toList()
