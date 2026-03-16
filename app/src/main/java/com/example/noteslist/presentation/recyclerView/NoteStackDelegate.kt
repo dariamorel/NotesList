@@ -1,0 +1,25 @@
+package com.example.noteslist.presentation.recyclerView
+
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.noteslist.domain.recyclerView.NoteStackItem
+import com.example.noteslist.domain.recyclerView.NotesItem
+import com.example.noteslist.presentation.NoteStackView
+
+class NoteStackDelegate : AdapterDelegate {
+
+    override fun isViewType(item: NotesItem) =
+        item is NoteStackItem
+
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        val view = NoteStackView(parent.context)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: NotesItem) {
+        val stackItem = item as NoteStackItem
+        (holder as ViewHolder).view.submitNotes(stackItem.notes)
+    }
+
+    class ViewHolder(val view: NoteStackView) : RecyclerView.ViewHolder(view)
+}
