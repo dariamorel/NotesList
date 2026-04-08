@@ -1,15 +1,13 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.add_note_screen
+package com.example.noteslist.presentation.ui.add_note_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.noteslist.Application
 import com.example.noteslist.databinding.FragmentAddNoteBinding
-import com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragmentDirections
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class AddNoteFragment: Fragment() {
@@ -30,7 +28,7 @@ class AddNoteFragment: Fragment() {
                 viewModel = viewModel
             ) {
                 findNavController().navigate(
-                    AddNoteFragmentDirections.navigateToRecyclerViewFragment()
+                    AddNoteFragmentDirections.Companion.navigateToRecyclerViewFragment()
                 )
             }
         }

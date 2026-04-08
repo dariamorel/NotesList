@@ -31,6 +31,8 @@ class NoteView @JvmOverloads constructor(
         initPaints()
     }
 
+    fun getNote() = note!!
+
     // Значения по умолчанию
     private val defaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background_color)
     private val defaultTextColor = ContextCompat.getColor(context, R.color.default_text_color)
@@ -315,14 +317,6 @@ class NoteView @JvmOverloads constructor(
                     val isImportant = note?.isImportant ?: false
                     note = note?.copy(isImportant = !isImportant)
                     callback?.onImportanceChanged(!isImportant)
-                    invalidate()
-                    return true
-                }
-                if (frameRect.contains(touchX, touchY) && !(note?.isRead ?: false)) {
-                    note = note?.copy(isRead = true)
-                    callback?.onReadChanged(true)
-                    applyStyle()
-                    initPaints()
                     invalidate()
                     return true
                 }

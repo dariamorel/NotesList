@@ -67,7 +67,12 @@ object NotesRepository {
     val notesList: List<Note>
         get() = _notesList.toList()
 
-    suspend fun addNote(note: Note) {
+    fun addNote(note: Note) {
         _notesList.add(note)
+    }
+
+    fun editNote(note: Note, newNote: Note) {
+        _notesList.remove(note)
+        _notesList.add(newNote)
     }
 }

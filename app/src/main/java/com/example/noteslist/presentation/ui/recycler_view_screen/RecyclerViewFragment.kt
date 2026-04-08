@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,7 +52,11 @@ class RecyclerViewFragment(): Fragment() {
 
         notesAdapter = NotesAdapter(
             listOf(
-                ImportantNoteDelegate(),
+                ImportantNoteDelegate { note ->
+                    findNavController().navigate(
+                        RecyclerViewFragmentDirections.navigateToEditNoteFragment(note)
+                    )
+                },
                 NoteStackDelegate(),
                 DateHeaderDelegate()
             )

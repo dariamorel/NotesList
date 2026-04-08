@@ -1,16 +1,19 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.add_note_screen
+package com.example.noteslist.presentation.ui.edit_note_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,30 +28,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragmentDirections
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNoteScreen(
+fun EditNoteScreen(
+    note: Note,
     viewModel: NotesViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var body by remember { mutableStateOf("") }
-    var isImportant by remember { mutableStateOf(false) }
+    var title by remember { mutableStateOf(note.title) }
+    var body by remember { mutableStateOf(note.body) }
+    var isImportant by remember { mutableStateOf(note.isImportant) }
     var isTitleFilled by remember { mutableStateOf(false) }
     var showTitleError by remember { mutableStateOf(false) }
+    var isRead by remember { mutableStateOf(note.isRead) }
 
     val starColor = colorResource(R.color.star_color)
     val buttonColor = colorResource(R.color.title_rect_color)
@@ -65,11 +68,37 @@ fun AddNoteScreen(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Text(
+            text = note.getCreateTimeFormatted(),
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.is_read),
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Checkbox(
+                checked = isRead,
+                onCheckedChange = { isRead = !isRead },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = buttonColor,
+                    uncheckedColor = MaterialTheme.colorScheme.onSurface .copy(alpha = 0.5f)
+                )
+            )
+        }
+
         Box(
             modifier = Modifier
                 .align(Alignment.Start)
@@ -91,7 +120,7 @@ fun AddNoteScreen(
             },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            label = { Text("Заголовок*") },
+            label = { Text(stringResource(R.string.title)) },
             isError = showTitleError,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
@@ -102,7 +131,7 @@ fun AddNoteScreen(
 
         if (showTitleError) {
             Text(
-                text = "необходимо заполнить",
+                text = stringResource(R.string.neet_to_fill),
                 color = Color.Red,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -113,7 +142,7 @@ fun AddNoteScreen(
             onValueChange = { newBody ->
                 body = newBody },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Текст заметки") },
+            label = { Text(stringResource(R.string.note_text)) },
             minLines = 4,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
@@ -128,7 +157,13 @@ fun AddNoteScreen(
                 if (!isTitleFilled) {
                     showTitleError = true
                 } else {
-                    viewModel.addNewNote(title, body, isImportant)
+                    viewModel.editNote(
+                        note = note,
+                        newTitle = title,
+                        newBody = body,
+                        newIsRead = isRead,
+                        newIsImportant = isImportant
+                    )
                     onBack()
                 }
             },
@@ -137,8 +172,7 @@ fun AddNoteScreen(
                 disabledContainerColor = buttonColor
             )
         ) {
-            Text("Добавить")
+            Text(stringResource(R.string.save))
         }
     }
-
 }

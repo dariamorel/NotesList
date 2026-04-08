@@ -9,6 +9,9 @@ import android.view.animation.PathInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.noteslist.Application
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
 import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
@@ -48,6 +51,8 @@ class NoteStackView @JvmOverloads constructor(
     // View
     private lateinit var backButton: MaterialButton
 
+    private val viewModel = (context.applicationContext as Application).notesViewModel
+
     init {
         isChildrenDrawingOrderEnabled = true
         initDimensions()
@@ -66,11 +71,25 @@ class NoteStackView @JvmOverloads constructor(
                 val noteView = NoteView(context)
                 noteView.setNote(note)
 
+                noteView.setOnClickListener {
+                    findNavController().navigate(
+                        RecyclerViewFragmentDirections.navigateToEditNoteFragment(note)
+                    )
+                }
+
                 noteView.setOnChangeListener(object : NoteView.OnChangeListener {
                     override fun onImportanceChanged(isImportant: Boolean) {
+                        viewModel.editNote(
+                            note = note,
+                            newIsImportant = isImportant
+                        )
                     }
 
                     override fun onReadChanged(isRead: Boolean) {
+                        viewModel.editNote(
+                            note = note,
+                            newIsRead = isRead
+                        )
                     }
                 })
 

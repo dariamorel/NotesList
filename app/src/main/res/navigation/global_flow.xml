@@ -12,19 +12,43 @@
 
         <action
             android:id="@+id/navigateToAddNoteFragment"
-            app:destination="@id/addNoteFragment"
-            app:popUpToInclusive="true"/>
+            app:destination="@id/addNoteFragment" />
+
+        <action
+            android:id="@+id/navigateToEditNoteFragment"
+            app:destination="@id/editNoteFragment">
+
+            <argument
+                android:name="note"
+                app:argType="com.example.noteslist.domain.Note"
+                app:nullable="false" />
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/addNoteFragment"
-        android:name="com.example.noteslist.presentation.ui.recycler_view_screen.add_note_screen.AddNoteFragment"
+        android:name="com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragment"
         tools:layout="@layout/fragment_add_note">
 
         <action
             android:id="@+id/navigateToRecyclerViewFragment"
-            app:destination="@id/recyclerViewFragment"
-            app:popUpToInclusive="true"/>
+            app:destination="@id/recyclerViewFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editNoteFragment"
+        android:name="com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragment"
+        tools:layout="@layout/fragment_edit_note">
+
+        <argument
+            android:name="note"
+            app:argType="com.example.noteslist.domain.Note"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/navigateToRecyclerViewFragment"
+            app:destination="@id/recyclerViewFragment" />
 
     </fragment>
 

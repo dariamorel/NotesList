@@ -22,7 +22,7 @@ class NotesViewModel(
     init {
         _notes.value = NotesRepository.notesList
     }
-    fun addNewNote(title: String, body: String?, isImportant: Boolean) {
+    fun addNewNote(title: String, body: String, isImportant: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             NotesRepository.addNote(
                 Note(
@@ -31,6 +31,19 @@ class NotesViewModel(
                     isImportant = isImportant
                 )
             )
+            _notes.value = NotesRepository.notesList
+        }
+    }
+
+    fun editNote(note: Note, newTitle: String? = null, newBody: String? = null, newIsRead: Boolean? = null, newIsImportant: Boolean? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updated = note.copy(
+                title = newTitle ?: note.title,
+                body = newBody ?: note.body,
+                isRead = newIsRead ?: note.isRead,
+                isImportant = newIsImportant ?: note.isImportant
+            )
+            NotesRepository.editNote(note, updated)
             _notes.value = NotesRepository.notesList
         }
     }
