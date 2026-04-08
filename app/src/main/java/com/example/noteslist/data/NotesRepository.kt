@@ -39,9 +39,30 @@ object NotesRepository {
             title = "Врач",
             body = "Среда 15:30",
             createTime = OffsetDateTime.of(2026, 3, 13, 16, 0, 0, 0, ZoneOffset.ofHours(3)),
-            isImportant = true,
+            isImportant = false,
             isRead = true
-        )
+        ),
+        Note(
+            title = "Доделать курсач",
+            body = "Доделать уже наконец-то курсач, доделать уже наконец-то курсач",
+            createTime = OffsetDateTime.of(2026, 3, 13, 17, 0, 0, 0, ZoneOffset.ofHours(3)),
+            isImportant = false,
+            isRead = false
+        ),
+        Note(
+            title = "Йога",
+            body = "Йога с собаками в парке в 15:00 сб",
+            createTime = OffsetDateTime.of(2026, 3, 13, 18, 0, 0, 0, ZoneOffset.ofHours(3)),
+            isImportant = false,
+            isRead = true
+        ),
+        Note(
+            title = "Список в поездку",
+            body = "Фотик, ноутбук, одежда, кроссовки",
+            createTime = OffsetDateTime.of(2026, 3, 13, 19, 0, 0, 0, ZoneOffset.ofHours(3)),
+            isImportant = false,
+            isRead = true
+        ),
     )
     val notesList = _notesList.toList()
 

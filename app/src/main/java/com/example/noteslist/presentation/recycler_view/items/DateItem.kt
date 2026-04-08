@@ -1,7 +1,6 @@
-package com.example.noteslist.domain.recyclerView
+package com.example.noteslist.presentation.recycler_view.items
 
 import java.time.LocalDate
-import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 data class DateItem(

@@ -1,9 +1,9 @@
-package com.example.noteslist.presentation.recyclerView
+package com.example.noteslist.presentation.recycler_view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteslist.domain.recyclerView.NoteStackItem
-import com.example.noteslist.domain.recyclerView.NotesItem
+import com.example.noteslist.presentation.recycler_view.items.NoteStackItem
+import com.example.noteslist.presentation.recycler_view.items.NotesItem
 import com.example.noteslist.presentation.NoteStackView
 
 class NoteStackDelegate : AdapterDelegate {
