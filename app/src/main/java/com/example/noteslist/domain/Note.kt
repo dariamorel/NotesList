@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 
 data class Note @JvmOverloads constructor(
     val title: String,
-    val body: String,
+    val body: String?,
     val isRead: Boolean = false,
     val createTime: OffsetDateTime = OffsetDateTime.now(),
     val isImportant: Boolean = false

@@ -1,20 +1,19 @@
-package com.example.noteslist.presentation
+package com.example.noteslist.presentation.ui.recycler_view_screen
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.view.animation.PathInterpolator
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.isEmpty
+import androidx.core.view.isGone
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
-import kotlin.math.min
-import androidx.core.view.isGone
-import androidx.core.view.isEmpty
+import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
 import com.google.android.material.button.MaterialButton
+import kotlin.math.min
 
 class NoteStackView @JvmOverloads constructor(
     context: Context,
@@ -113,7 +112,7 @@ class NoteStackView @JvmOverloads constructor(
                 false
             ) as MaterialButton
 
-        backButton.visibility = View.GONE
+        backButton.visibility = GONE
         backButton.alpha = 0f
         backButton.scaleX = BACK_BUTTON_START_SCALE
         backButton.scaleY = BACK_BUTTON_START_SCALE
@@ -330,7 +329,7 @@ class NoteStackView @JvmOverloads constructor(
 
     private fun showBackButtonAnimated() {
         backButton.animate().cancel()
-        backButton.visibility = View.VISIBLE
+        backButton.visibility = VISIBLE
         backButton.alpha = 0f
         backButton.scaleX = BACK_BUTTON_START_SCALE
         backButton.scaleY = BACK_BUTTON_START_SCALE
@@ -349,7 +348,7 @@ class NoteStackView @JvmOverloads constructor(
         isExpandAnimating = false
         pendingExpandAnimation = false
         backButton.animate().cancel()
-        backButton.visibility = View.GONE
+        backButton.visibility = GONE
         backButton.alpha = 0f
         backButton.scaleX = BACK_BUTTON_START_SCALE
         backButton.scaleY = BACK_BUTTON_START_SCALE

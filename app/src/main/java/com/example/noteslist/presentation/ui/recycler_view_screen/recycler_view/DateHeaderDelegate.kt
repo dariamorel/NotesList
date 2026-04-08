@@ -1,12 +1,12 @@
-package com.example.noteslist.presentation.recycler_view
+package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view
 
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.R
-import com.example.noteslist.presentation.recycler_view.items.DateItem
-import com.example.noteslist.presentation.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.DateItem
+import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
 
 class DateHeaderDelegate: AdapterDelegate {
 

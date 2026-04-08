@@ -1,10 +1,10 @@
-package com.example.noteslist.presentation.recycler_view
+package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteslist.presentation.recycler_view.items.ImportantNoteItem
-import com.example.noteslist.presentation.recycler_view.items.NotesItem
-import com.example.noteslist.presentation.NoteView
+import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.ImportantNoteItem
+import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
 
 class ImportantNoteDelegate : AdapterDelegate {
 

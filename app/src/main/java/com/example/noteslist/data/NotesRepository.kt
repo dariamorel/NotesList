@@ -64,21 +64,10 @@ object NotesRepository {
             isRead = true
         ),
     )
-    val notesList = _notesList.toList()
+    val notesList: List<Note>
+        get() = _notesList.toList()
 
-    fun addNote(note: Note) {
+    suspend fun addNote(note: Note) {
         _notesList.add(note)
-    }
-
-    fun changeRead(note: Note) {
-        val isRead = note.isRead
-        _notesList.remove(note)
-        _notesList.add(note.copy(isRead = !isRead))
-    }
-
-    fun changeImportance(note: Note) {
-        val isImportant = note.isImportant
-        _notesList.remove(note)
-        _notesList.add(note.copy(isImportant = !isImportant))
     }
 }

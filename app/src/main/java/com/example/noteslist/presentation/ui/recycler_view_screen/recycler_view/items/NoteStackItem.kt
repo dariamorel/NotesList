@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.recycler_view.items
+package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items
 
 import com.example.noteslist.domain.Note
 

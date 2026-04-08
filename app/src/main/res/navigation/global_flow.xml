@@ -7,20 +7,24 @@
 
     <fragment
         android:id="@+id/recyclerViewFragment"
-        android:name="com.example.noteslist.ui.RecyclerViewFragment"
+        android:name="com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragment"
         tools:layout="@layout/fragment_recycler_view" >
 
         <action
             android:id="@+id/navigateToAddNoteFragment"
             app:destination="@id/addNoteFragment"
-            app:popUpTo="@id/recyclerViewFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/addNoteFragment"
-        android:name="com.example.noteslist.ui.AddNoteFragment"
+        android:name="com.example.noteslist.presentation.ui.recycler_view_screen.add_note_screen.AddNoteFragment"
         tools:layout="@layout/fragment_add_note">
+
+        <action
+            android:id="@+id/navigateToRecyclerViewFragment"
+            app:destination="@id/recyclerViewFragment"
+            app:popUpToInclusive="true"/>
 
     </fragment>
 

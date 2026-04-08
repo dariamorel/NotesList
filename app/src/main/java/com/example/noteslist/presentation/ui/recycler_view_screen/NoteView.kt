@@ -1,10 +1,9 @@
-package com.example.noteslist.presentation
+package com.example.noteslist.presentation.ui.recycler_view_screen
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.StaticLayout
@@ -14,13 +13,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.component1
-import com.example.noteslist.R
-import androidx.core.graphics.toColorInt
-import com.example.noteslist.domain.Note
-import kotlin.apply
 import androidx.core.graphics.withTranslation
-import java.text.SimpleDateFormat
+import com.example.noteslist.R
+import com.example.noteslist.domain.Note
 
 class NoteView @JvmOverloads constructor(
     context: Context,
