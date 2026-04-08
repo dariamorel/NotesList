@@ -23,65 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
-        val noteList = NotesRepository.notesList
-        val items = mapNotesToItems(noteList)
-
-        val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
-
-        val adapter = NotesAdapter(
-            listOf(
-                ImportantNoteDelegate(),
-                NoteStackDelegate(),
-                DateHeaderDelegate()
-            )
-        )
-        adapter.submitItems(items)
-
         setContentView(binding.root)
 
-        binding.addButton.setOnClickListener {
-        }
-
-        val ctx = this
-        binding.recyclerView.apply {
-            this.adapter = adapter
-            layoutManager = LinearLayoutManager(ctx)
-            addItemDecoration(object : RecyclerView.ItemDecoration() {
-                override fun getItemOffsets(
-                    outRect: android.graphics.Rect,
-                    view: View,
-                    parent: RecyclerView,
-                    state: RecyclerView.State
-                ) {
-                    outRect.bottom = spacing
-                }
-            })
-        }
-
-    }
-
-    private fun mapNotesToItems(notes: List<Note>): List<NotesItem> {
-
-        val grouped = notes.groupBy { it.createTime.toLocalDate() }
-
-        val result = mutableListOf<NotesItem>()
-
-        grouped.keys.sortedDescending().forEach { date ->
-            result.add(DateItem(date))
-
-            val notesForDate = grouped[date]!!
-
-            notesForDate.filter { it.isImportant }.forEach { note ->
-                result.add(ImportantNoteItem(note))
-            }
-
-            val normalNotes = notesForDate.filter { !it.isImportant }
-            if (normalNotes.isNotEmpty()) {
-                result.add(NoteStackItem(normalNotes))
-            }
-        }
-
-        return result
     }
 }

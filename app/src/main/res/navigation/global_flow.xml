@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/global_flow"
+    app:startDestination="@id/recyclerViewFragment">
+
+    <fragment
+        android:id="@+id/recyclerViewFragment"
+        android:name="com.example.noteslist.ui.RecyclerViewFragment"
+        tools:layout="@layout/fragment_recycler_view" >
+
+        <action
+            android:id="@+id/navigateToAddNoteFragment"
+            app:destination="@id/addNoteFragment"
+            app:popUpTo="@id/recyclerViewFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNoteFragment"
+        android:name="com.example.noteslist.ui.AddNoteFragment"
+        tools:layout="@layout/fragment_add_note">
+
+    </fragment>
+
+
+</navigation>
