@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        binding.addButton.setOnClickListener {
+        }
+
         val ctx = this
         binding.recyclerView.apply {
             this.adapter = adapter
