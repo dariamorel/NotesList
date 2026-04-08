@@ -1,22 +1,20 @@
 package com.example.noteslist.presentation
 
-import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.RectF
-import android.graphics.Typeface
-import android.text.TextPaint
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.PathInterpolator
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
 import kotlin.math.min
 import androidx.core.view.isGone
 import androidx.core.view.isEmpty
+import com.google.android.material.button.MaterialButton
 
 class NoteStackView @JvmOverloads constructor(
     context: Context,
@@ -30,6 +28,7 @@ class NoteStackView @JvmOverloads constructor(
     private var defaultStackSpacing = 0f
     private var defaultStackMaxVisible = 3
     private var defaultTextColor = ContextCompat.getColor(context, R.color.default_text_color)
+    private val defaultCornerRadius = context.resources.getDimension(R.dimen.default_corner_radius)
 
     // Стейт
     private var stackSpacing = defaultStackSpacing
@@ -38,28 +37,24 @@ class NoteStackView @JvmOverloads constructor(
     private var backButtonSize = 0f
     private var isExpandAnimating = false
     private var pendingExpandAnimation = false
-    private var backButtonAlpha = 0f
-    private var backButtonScale = BACK_BUTTON_START_SCALE
-
-    // Геометрия
-    private val backButtonRect = RectF()
-    private val backButtonPaint = TextPaint().apply { isAntiAlias = true }
     private val stackInterpolator = PathInterpolator(0.4f, 0.1f, 0.2f, 1f)
-    private var backButtonAnimator: ValueAnimator? = null
 
     // Callback
     private var callback: OnChangeListener? = null
     private val showBackButtonRunnable = Runnable {
         if (!isExpanded) return@Runnable
-        animateBackButtonIn()
+        showBackButtonAnimated()
     }
 
+    // View
+    private lateinit var backButton: MaterialButton
+
     init {
-        setWillNotDraw(false)
-        setChildrenDrawingOrderEnabled(true)
+        isChildrenDrawingOrderEnabled = true
         initDimensions()
         initAttrs(attrs, defStyleAttr, defStyleRes)
-        initPaints()
+        initButton()
+        initClicks()
     }
 
     fun submitNotes(notes: List<Note>) {
@@ -83,6 +78,8 @@ class NoteStackView @JvmOverloads constructor(
                 addView(noteView)
             }
 
+        addView(backButton)
+
         requestLayout()
     }
 
@@ -94,14 +91,6 @@ class NoteStackView @JvmOverloads constructor(
             stackMaxVisible = defaultStackMaxVisible
             stackVerticalSpacing = getDimension(R.dimen.stack_vertical_spacing)
             backButtonSize = getDimension(R.dimen.back_button_size)
-        }
-    }
-
-    private fun initPaints() {
-        backButtonPaint.apply {
-            textSize = backButtonSize
-            typeface = Typeface.DEFAULT
-            color = defaultTextColor
         }
     }
 
@@ -117,13 +106,47 @@ class NoteStackView @JvmOverloads constructor(
         }
     }
 
+    private fun initButton() {
+        backButton = LayoutInflater.from(context).inflate(
+                R.layout.note_stack_view_btn_back,
+                this,
+                false
+            ) as MaterialButton
+
+        backButton.visibility = View.GONE
+        backButton.alpha = 0f
+        backButton.scaleX = BACK_BUTTON_START_SCALE
+        backButton.scaleY = BACK_BUTTON_START_SCALE
+        backButton.setTextColor(defaultTextColor)
+
+        addView(backButton)
+    }
+
+    private fun initClicks() {
+        isClickable = true
+
+        setOnClickListener {
+            if (!isExpanded && !isExpandAnimating) {
+                startExpand()
+            }
+        }
+
+        backButton.setOnClickListener {
+            if (!isExpanded) return@setOnClickListener
+            resetAnimations()
+            isExpanded = false
+            callback?.onExpandedChanged(false)
+            requestLayout()
+        }
+    }
+
     override fun shouldDelayChildPressedState(): Boolean = false
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
        var totalWidth = 0f
        var maxWidth = 0f
-       val visibleNotesCount = minOf(stackMaxVisible, childCount)
-       val measuredNotesCount = if (isExpanded) childCount else visibleNotesCount
+       val visibleNotesCount = minOf(stackMaxVisible, childCount - 1)
+       val measuredNotesCount = if (isExpanded) childCount - 1 else visibleNotesCount
        var totalHeight = 0f
 
        var prevChildHeight = stackSpacing
@@ -149,15 +172,23 @@ class NoteStackView @JvmOverloads constructor(
            prevChildHeight = childTotalHeight.toFloat()
            prevChildWidth = childTotalWidth.toFloat()
        }
-       if (isExpanded) {
-           totalHeight += stackVerticalSpacing * (childCount - 1).coerceAtLeast(0)
-           totalWidth = maxWidth
-           totalHeight += backButtonSize
-       }
 
-       val measuredWidth = resolveSize(totalWidth.toInt(), widthMeasureSpec)
-       val measuredHeight = resolveSize(totalHeight.toInt(), heightMeasureSpec)
-       setMeasuredDimension(measuredWidth, measuredHeight)
+        // Измеряем кнопку
+        val child = getChildAt(childCount - 1)
+        measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+        val lp = child.layoutParams as MarginLayoutParams
+        val childTotalWidth = child.measuredWidth + lp.leftMargin + lp.rightMargin
+        val childTotalHeight = child.measuredHeight + lp.topMargin + lp.bottomMargin + defaultCornerRadius * 2
+
+        if (isExpanded) {
+           totalHeight += stackVerticalSpacing * (childCount - 2).coerceAtLeast(0)
+           totalWidth = maxOf(maxWidth, childTotalWidth.toFloat())
+           totalHeight += childTotalHeight
+        }
+
+        val measuredWidth = resolveSize(totalWidth.toInt(), widthMeasureSpec)
+        val measuredHeight = resolveSize(totalHeight.toInt(), heightMeasureSpec)
+        setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
     override fun onLayout(
@@ -167,12 +198,12 @@ class NoteStackView @JvmOverloads constructor(
         parentRight: Int,
         parentBottom: Int
     ) {
-       val visibleNotesCount = minOf(stackMaxVisible, childCount)
+       val visibleNotesCount = minOf(stackMaxVisible, childCount - 1)
 
        if (isExpanded) {
            val left = paddingLeft
            var top = paddingTop
-           for (i in 0 until childCount) {
+           for (i in 0 until childCount - 1) {
                val child = getChildAt(i)
                if (child.isGone) continue
 
@@ -185,13 +216,13 @@ class NoteStackView @JvmOverloads constructor(
                child.layout(left, top, right, bottom)
                top += childTotalHeight + stackVerticalSpacing.toInt()
            }
-
-           backButtonRect.set(
-               paddingLeft.toFloat(),
-               top.toFloat(),
-               (width - paddingRight).toFloat(),
-               top + backButtonSize
-           )
+           val btn = backButton
+           val btnLp = btn.layoutParams as MarginLayoutParams
+           val btnLeft = paddingLeft + btnLp.leftMargin
+           val btnTop = top + btnLp.topMargin
+           val btnRight = btnLeft + btn.measuredWidth
+           val btnBottom = btnTop + btn.measuredHeight
+           btn.layout(btnLeft, btnTop, btnRight, btnBottom)
 
            if (pendingExpandAnimation) {
                pendingExpandAnimation = false
@@ -200,7 +231,7 @@ class NoteStackView @JvmOverloads constructor(
        } else {
            val stackSpacingInt = stackSpacing.toInt()
            val lastVisibleSlot = (visibleNotesCount - 1).coerceAtLeast(0)
-           for (i in 0 until childCount) {
+           for (i in 0 until childCount - 1) {
                val child = getChildAt(i)
                if (child.isGone) continue
 
@@ -216,64 +247,16 @@ class NoteStackView @JvmOverloads constructor(
                child.layout(left, top, right, bottom)
                child.translationY = 0f
            }
+
+           backButton.layout(0, 0, 0, 0)
        }
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        if (isExpanded && backButtonAlpha > 0f) {
-            val text = "<< Свернуть"
-            val originalAlpha = backButtonPaint.alpha
-            val textWidth = backButtonPaint.measureText(text)
-            val centerX = backButtonRect.centerX()
-            val centerY = backButtonRect.centerY()
-            val fontMetrics = backButtonPaint.fontMetrics
-            val baseline = -((fontMetrics.ascent + fontMetrics.descent) / 2f)
-
-            backButtonPaint.alpha = (255 * backButtonAlpha).toInt()
-            canvas.save()
-            canvas.translate(centerX, centerY)
-            canvas.scale(backButtonScale, backButtonScale)
-            canvas.drawText(text, -textWidth / 2f, baseline, backButtonPaint)
-            canvas.restore()
-            backButtonPaint.alpha = originalAlpha
-        }
-    }
-
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return !isExpanded || isExpandAnimating
+        return (!isExpanded) || isExpandAnimating
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val touchX = event.x
-        val touchY = event.y
-
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                if (isExpanded && backButtonRect.contains(touchX, touchY)) {
-                    resetAnimations()
-                    isExpanded = false
-                    callback?.onExpandedChanged(false)
-                    requestLayout()
-                    invalidate()
-                    return true
-                }
-                if (!isExpanded && !isExpandAnimating) {
-                    backButtonAnimator?.cancel()
-                    backButtonAlpha = 0f
-                    backButtonScale = BACK_BUTTON_START_SCALE
-                    isExpanded = true
-                    isExpandAnimating = true
-                    pendingExpandAnimation = true
-                    callback?.onExpandedChanged(true)
-                    requestLayout()
-                    invalidate()
-                    return true
-                }
-            }
-        }
-
         return super.onTouchEvent(event)
     }
 
@@ -286,17 +269,18 @@ class NoteStackView @JvmOverloads constructor(
     }
 
     override fun getChildDrawingOrder(childCount: Int, drawingPosition: Int): Int {
-        if (isExpanded && !isExpandAnimating) {
-            return drawingPosition
-        }
+        val backButtonIndex = childCount - 1
+        if (drawingPosition == childCount - 1) return backButtonIndex
 
-        val visibleNotesCount = minOf(stackMaxVisible, childCount)
-        val hiddenCount = (childCount - visibleNotesCount).coerceAtLeast(0)
-        return if (drawingPosition < hiddenCount) {
+        val notesCount = (childCount - 1).coerceAtLeast(0)
+        val visibleNotesCount = minOf(stackMaxVisible, notesCount)
+        val hiddenCount = (notesCount - visibleNotesCount).coerceAtLeast(0)
+        val index = if (drawingPosition < hiddenCount) {
             visibleNotesCount + drawingPosition
         } else {
             visibleNotesCount - 1 - (drawingPosition - hiddenCount)
-        }.coerceIn(0, childCount - 1)
+        }
+        return index.coerceIn(0, notesCount - 1)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
@@ -312,18 +296,18 @@ class NoteStackView @JvmOverloads constructor(
     }
 
     private fun startExpandAnimation(visibleNotesCount: Int) {
-        if (isEmpty()) {
+        if (isEmpty() || childCount <= 1) {
             isExpandAnimating = false
             showBackButtonRunnable.run()
             return
         }
 
         val totalWaveDuration =
-            min(MAX_ANIMATION_DURATION, BASE_ANIMATION_DURATION + childCount * ANIMATION_STEP)
+            min(MAX_ANIMATION_DURATION, BASE_ANIMATION_DURATION + (childCount - 1) * ANIMATION_STEP)
         val stackSpacingInt = stackSpacing.toInt()
         val lastVisibleSlot = (visibleNotesCount - 1).coerceAtLeast(0)
 
-        for (i in 0 until childCount) {
+        for (i in 0 until childCount - 1) {
             val child = getChildAt(i)
             // позиция в свернутом состоянии
             val collapsedTop = paddingTop + min(i, lastVisibleSlot) * stackSpacingInt
@@ -344,33 +328,44 @@ class NoteStackView @JvmOverloads constructor(
         postDelayed(showBackButtonRunnable, (totalWaveDuration + BACK_BUTTON_DELAY).toLong())
     }
 
-    private fun animateBackButtonIn() {
-        backButtonAnimator?.cancel()
-        backButtonAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = BACK_BUTTON_ANIMATION_DURATION.toLong()
-            interpolator = stackInterpolator
-            addUpdateListener { animator ->
-                val progress = animator.animatedValue as Float
-                backButtonAlpha = progress
-                backButtonScale =
-                    BACK_BUTTON_START_SCALE + (1f - BACK_BUTTON_START_SCALE) * progress
-                invalidate()
-            }
-            start()
-        }
-        isExpandAnimating = false
+    private fun showBackButtonAnimated() {
+        backButton.animate().cancel()
+        backButton.visibility = View.VISIBLE
+        backButton.alpha = 0f
+        backButton.scaleX = BACK_BUTTON_START_SCALE
+        backButton.scaleY = BACK_BUTTON_START_SCALE
+        backButton.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(BACK_BUTTON_ANIMATION_DURATION.toLong())
+            .setStartDelay(0L)
+            .setInterpolator(stackInterpolator)
+            .withEndAction { isExpandAnimating = false }
+            .start()
     }
 
     private fun resetAnimations() {
         isExpandAnimating = false
         pendingExpandAnimation = false
-        backButtonAnimator?.cancel()
-        backButtonAlpha = 0f
-        backButtonScale = BACK_BUTTON_START_SCALE
-        for (i in 0 until childCount) {
+        backButton.animate().cancel()
+        backButton.visibility = View.GONE
+        backButton.alpha = 0f
+        backButton.scaleX = BACK_BUTTON_START_SCALE
+        backButton.scaleY = BACK_BUTTON_START_SCALE
+        for (i in 0 until childCount - 1) {
             getChildAt(i).animate().cancel()
             getChildAt(i).translationY = 0f
         }
+    }
+
+    private fun startExpand() {
+        resetAnimations()
+        isExpanded = true
+        isExpandAnimating = true
+        pendingExpandAnimation = true
+        callback?.onExpandedChanged(true)
+        requestLayout()
     }
 
     private companion object {

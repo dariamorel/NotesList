@@ -6,4 +6,5 @@
     <color name="title_rect_color">#62abf0</color>
     <color name="star_color">#ebc12a</color>
     <color name="check_circle_color">#40962a</color>
+    <color name="collapse_btn_color">#62abf0</color>
 </resources>
