@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.noteslist.Application
@@ -14,7 +15,6 @@ import com.example.noteslist.presentation.view_model.NotesViewModel
 class EditNoteFragment: Fragment() {
     private var _binding: FragmentEditNoteBinding? = null
     val binding get() = _binding!!
-    private lateinit var viewModel: NotesViewModel
     private val args: EditNoteFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -22,7 +22,7 @@ class EditNoteFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = (requireContext().applicationContext as Application).notesViewModel
+        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
 
         val note = args.note
 

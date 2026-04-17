@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
@@ -31,7 +32,6 @@ import kotlinx.coroutines.launch
 class RecyclerViewFragment(): Fragment() {
     private var _binding: FragmentRecyclerViewBinding? = null
     val binding get() = _binding!!
-    private lateinit var viewModel: NotesViewModel
     private lateinit var notesAdapter: NotesAdapter
 
     override fun onCreateView(
@@ -46,24 +46,24 @@ class RecyclerViewFragment(): Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = (requireContext().applicationContext as Application).notesViewModel
+        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
         notesAdapter = NotesAdapter(
             listOf(
-                ImportantNoteDelegate { note ->
+                ImportantNoteDelegate(viewModel) { note ->
                     findNavController().navigate(
                         RecyclerViewFragmentDirections.navigateToEditNoteFragment(note)
                     )
                 },
-                NoteStackDelegate(),
+                NoteStackDelegate(viewModel),
                 DateHeaderDelegate()
             )
         )
 
         binding.recyclerView.apply {
-            this.adapter = notesAdapter
+            adapter = notesAdapter
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
@@ -77,7 +77,7 @@ class RecyclerViewFragment(): Fragment() {
             })
         }
 
-        binding.addButton.setOnClickListener {
+        binding.addButton?.setOnClickListener {
             findNavController().navigate(
                 RecyclerViewFragmentDirections.Companion.navigateToAddNoteFragment()
             )

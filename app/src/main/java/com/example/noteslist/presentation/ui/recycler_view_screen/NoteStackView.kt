@@ -9,12 +9,14 @@ import android.view.animation.PathInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.noteslist.Application
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
 import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
+import com.example.noteslist.presentation.view_model.NotesViewModel
 import com.google.android.material.button.MaterialButton
 import kotlin.math.min
 
@@ -51,8 +53,6 @@ class NoteStackView @JvmOverloads constructor(
     // View
     private lateinit var backButton: MaterialButton
 
-    private val viewModel = (context.applicationContext as Application).notesViewModel
-
     init {
         isChildrenDrawingOrderEnabled = true
         initDimensions()
@@ -62,7 +62,7 @@ class NoteStackView @JvmOverloads constructor(
     }
 
     fun submitNotes(notes: List<Note>) {
-        resetAnimations()
+        cancelAnimations()
         removeAllViews()
 
         notes
@@ -77,16 +77,24 @@ class NoteStackView @JvmOverloads constructor(
                     )
                 }
 
+                noteView.setOnLongClickListener {
+                    callback?.onNoteEdit(
+                        note = note,
+                        newIsRead = true
+                    )
+                    true
+                }
+
                 noteView.setOnChangeListener(object : NoteView.OnChangeListener {
                     override fun onImportanceChanged(isImportant: Boolean) {
-                        viewModel.editNote(
+                        callback?.onNoteEdit(
                             note = note,
                             newIsImportant = isImportant
                         )
                     }
 
                     override fun onReadChanged(isRead: Boolean) {
-                        viewModel.editNote(
+                        callback?.onNoteEdit(
                             note = note,
                             newIsRead = isRead
                         )
@@ -151,9 +159,9 @@ class NoteStackView @JvmOverloads constructor(
 
         backButton.setOnClickListener {
             if (!isExpanded) return@setOnClickListener
-            resetAnimations()
+            cancelAnimations()
+            hideBackButton()
             isExpanded = false
-            callback?.onExpandedChanged(false)
             requestLayout()
         }
     }
@@ -283,7 +291,7 @@ class NoteStackView @JvmOverloads constructor(
     }
 
     interface OnChangeListener {
-        fun onExpandedChanged(isExpanded: Boolean)
+        fun onNoteEdit(note: Note, newTitle: String? = null, newBody: String? = null, newIsRead: Boolean? = null, newIsImportant: Boolean? = null)
     }
 
     override fun getChildDrawingOrder(childCount: Int, drawingPosition: Int): Int {
@@ -363,26 +371,29 @@ class NoteStackView @JvmOverloads constructor(
             .start()
     }
 
-    private fun resetAnimations() {
+    private fun cancelAnimations() {
         isExpandAnimating = false
         pendingExpandAnimation = false
         backButton.animate().cancel()
-        backButton.visibility = GONE
-        backButton.alpha = 0f
-        backButton.scaleX = BACK_BUTTON_START_SCALE
-        backButton.scaleY = BACK_BUTTON_START_SCALE
         for (i in 0 until childCount - 1) {
             getChildAt(i).animate().cancel()
             getChildAt(i).translationY = 0f
         }
     }
 
+    private fun hideBackButton() {
+        backButton.visibility = GONE
+        backButton.alpha = 0f
+        backButton.scaleX = BACK_BUTTON_START_SCALE
+        backButton.scaleY = BACK_BUTTON_START_SCALE
+    }
+
     private fun startExpand() {
-        resetAnimations()
+        cancelAnimations()
+        hideBackButton()
         isExpanded = true
         isExpandAnimating = true
         pendingExpandAnimation = true
-        callback?.onExpandedChanged(true)
         requestLayout()
     }
 

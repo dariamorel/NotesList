@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.noteslist.Application
 import com.example.noteslist.databinding.FragmentAddNoteBinding
@@ -13,14 +14,13 @@ import com.example.noteslist.presentation.view_model.NotesViewModel
 class AddNoteFragment: Fragment() {
     private var _binding: FragmentAddNoteBinding? = null
     val binding get() = _binding!!
-    private lateinit var viewModel: NotesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = (requireContext().applicationContext as Application).notesViewModel
+        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
 
         _binding = FragmentAddNoteBinding.inflate(inflater, container, false)
         binding.composeView.setContent {

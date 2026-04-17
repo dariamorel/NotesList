@@ -9,8 +9,10 @@ import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
 import com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragmentDirections
 import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.ImportantNoteItem
 import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class ImportantNoteDelegate(
+    private val viewModel: NotesViewModel,
     private val onClick: (Note) -> Unit
 ) : AdapterDelegate {
 
@@ -28,7 +30,6 @@ class ImportantNoteDelegate(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: NotesItem) {
         val noteItem = item as ImportantNoteItem
         val view = (holder as ViewHolder).view
-        val viewModel = (view.context.applicationContext as Application).notesViewModel
         view.setNote(noteItem.note)
         view.setOnChangeListener(object : NoteView.OnChangeListener {
             override fun onImportanceChanged(isImportant: Boolean) {
@@ -39,6 +40,14 @@ class ImportantNoteDelegate(
                 viewModel.editNote(note = noteItem.note, newIsRead = isRead)
             }
         })
+
+        view.setOnLongClickListener {
+            viewModel.editNote(
+                note = noteItem.note,
+                newIsRead = true
+            )
+            true
+        }
     }
 
     class ViewHolder(val view: NoteView) : RecyclerView.ViewHolder(view)
