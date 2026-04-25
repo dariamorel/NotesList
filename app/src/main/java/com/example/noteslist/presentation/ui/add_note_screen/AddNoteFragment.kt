@@ -4,34 +4,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.noteslist.Application
-import com.example.noteslist.databinding.FragmentAddNoteBinding
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class AddNoteFragment: Fragment() {
-    private var _binding: FragmentAddNoteBinding? = null
-    val binding get() = _binding!!
+
+    private val viewModel by activityViewModels<NotesViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
-
-        _binding = FragmentAddNoteBinding.inflate(inflater, container, false)
-        binding.composeView.setContent {
-            AddNoteScreen(
-                viewModel = viewModel
-            ) {
-                findNavController().navigate(
-                    AddNoteFragmentDirections.Companion.navigateToRecyclerViewFragment()
-                )
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Scaffold { innerPadding ->
+                    AddNoteScreen(
+                        viewModel =  viewModel,
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        findNavController().navigate(
+                            AddNoteFragmentDirections.navigateToRecyclerViewFragment()
+                        )
+                    }
+                }
             }
         }
-        return binding.root
     }
 }

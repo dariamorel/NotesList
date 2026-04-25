@@ -4,39 +4,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.noteslist.Application
-import com.example.noteslist.databinding.FragmentEditNoteBinding
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class EditNoteFragment: Fragment() {
-    private var _binding: FragmentEditNoteBinding? = null
-    val binding get() = _binding!!
     private val args: EditNoteFragmentArgs by navArgs()
+
+    private val viewModel by activityViewModels<NotesViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
 
-        val note = args.note
-
-        _binding = FragmentEditNoteBinding.inflate(inflater, container, false)
-        binding.composeView.setContent {
-            EditNoteScreen(
-                note = note,
-                viewModel = viewModel
-            ) {
-                findNavController().navigate(
-                    EditNoteFragmentDirections.navigateToRecyclerViewFragment()
-                )
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Scaffold { innerPadding ->
+                    EditNoteScreen(
+                        note = args.note,
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        findNavController().navigate(
+                            EditNoteFragmentDirections.navigateToRecyclerViewFragment()
+                        )
+                    }
+                }
             }
         }
-        return binding.root
     }
 }
