@@ -73,25 +73,18 @@ class NoteStackView @JvmOverloads constructor(
                 }
 
                 noteView.setOnLongClickListener {
-                    callback?.onNoteEdit(
+                    callback?.onReadChanged(
                         note = note,
-                        newIsRead = true
+                        isRead = !note.isRead
                     )
                     true
                 }
 
                 noteView.setOnChangeListener(object : NoteView.OnChangeListener {
                     override fun onImportanceChanged(isImportant: Boolean) {
-                        callback?.onNoteEdit(
+                        callback?.onImportanceChanged(
                             note = note,
-                            newIsImportant = isImportant
-                        )
-                    }
-
-                    override fun onReadChanged(isRead: Boolean) {
-                        callback?.onNoteEdit(
-                            note = note,
-                            newIsRead = isRead
+                            isImportant = isImportant
                         )
                     }
                 })
@@ -286,7 +279,9 @@ class NoteStackView @JvmOverloads constructor(
     }
 
     interface OnChangeListener {
-        fun onNoteEdit(note: Note, newTitle: String? = null, newBody: String? = null, newIsRead: Boolean? = null, newIsImportant: Boolean? = null)
+        fun onImportanceChanged(note: Note, isImportant: Boolean)
+
+        fun onReadChanged(note: Note, isRead: Boolean)
     }
 
     override fun getChildDrawingOrder(childCount: Int, drawingPosition: Int): Int {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -24,13 +25,14 @@ import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ite
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
-import com.example.noteslist.presentation.view_model.NotesViewModel
 import kotlinx.coroutines.launch
 
 class NotesListFragment(): Fragment() {
     private var _binding: FragmentNotesListBinding ? = null
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
+
+    private val viewModel by viewModels<NotesListViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +45,6 @@ class NotesListFragment(): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val viewModel = ViewModelProvider(requireActivity())[NotesViewModel::class.java]
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 

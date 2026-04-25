@@ -1,11 +1,14 @@
 package com.example.noteslist.data
 
 import com.example.noteslist.domain.Note
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 object NotesRepository {
-    private var _notesList = mutableListOf(
+    private var _notesList = MutableStateFlow<List<Note>>(mutableListOf(
         Note(
             title = "Погулять с собакой",
             body = "Сходить в парк и на игровую площадку",
@@ -63,16 +66,17 @@ object NotesRepository {
             isImportant = false,
             isRead = true
         ),
-    )
-    val notesList: List<Note>
-        get() = _notesList.toList()
+    ))
+    val notesList = _notesList.asStateFlow()
 
     fun addNote(note: Note) {
-        _notesList.add(note)
+        _notesList.value = _notesList.value + note
     }
 
     fun editNote(note: Note, newNote: Note) {
-        _notesList.remove(note)
-        _notesList.add(newNote)
+        val notes = _notesList.value.toMutableList()
+        notes.remove(note)
+        notes += newNote
+        _notesList.value = notes
     }
 }

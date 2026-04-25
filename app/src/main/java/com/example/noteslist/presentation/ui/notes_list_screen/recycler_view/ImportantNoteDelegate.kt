@@ -4,12 +4,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.domain.Note
 import com.example.noteslist.presentation.ui.notes_list_screen.NoteView
+import com.example.noteslist.presentation.ui.notes_list_screen.NotesListViewModel
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
-import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class ImportantNoteDelegate(
-    private val viewModel: NotesViewModel,
+    private val viewModel: NotesListViewModel,
     private val onClick: (Note) -> Unit
 ) : AdapterDelegate {
 
@@ -30,19 +30,13 @@ class ImportantNoteDelegate(
         view.setNote(noteItem.note)
         view.setOnChangeListener(object : NoteView.OnChangeListener {
             override fun onImportanceChanged(isImportant: Boolean) {
-                viewModel.editNote(note = noteItem.note, newIsImportant = isImportant)
-            }
-
-            override fun onReadChanged(isRead: Boolean) {
-                viewModel.editNote(note = noteItem.note, newIsRead = isRead)
+                viewModel.changeImportance(noteItem.note, isImportant)
             }
         })
 
         view.setOnLongClickListener {
-            viewModel.editNote(
-                note = noteItem.note,
-                newIsRead = true
-            )
+            val note = noteItem.note
+            viewModel.changeRead(note, !note.isRead)
             true
         }
     }

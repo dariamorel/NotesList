@@ -9,15 +9,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class EditNoteFragment: Fragment() {
     private val args: EditNoteFragmentArgs by navArgs()
 
-    private val viewModel by activityViewModels<NotesViewModel>()
+    private val viewModel by viewModels<EditNoteViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

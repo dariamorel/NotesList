@@ -32,12 +32,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.noteslist.R
-import com.example.noteslist.presentation.view_model.NotesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNoteScreen(
-    viewModel: NotesViewModel,
+    viewModel: AddNoteViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {

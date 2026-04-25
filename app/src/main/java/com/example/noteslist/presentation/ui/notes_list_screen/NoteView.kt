@@ -304,7 +304,6 @@ class NoteView @JvmOverloads constructor(
 
     interface OnChangeListener {
         fun onImportanceChanged(isImportant: Boolean)
-        fun onReadChanged(isRead: Boolean)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

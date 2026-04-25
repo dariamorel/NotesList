@@ -36,13 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.view_model.NotesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteScreen(
     note: Note,
-    viewModel: NotesViewModel,
+    viewModel: EditNoteViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
