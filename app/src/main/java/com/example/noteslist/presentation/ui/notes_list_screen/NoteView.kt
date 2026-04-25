@@ -113,18 +113,14 @@ class NoteView @JvmOverloads constructor(
         val styleRes = if (note?.isRead ?: false) R.style.NoteStyle_Read else R.style.NoteStyle_NotRead
         val typedArray = context.obtainStyledAttributes(styleRes, R.styleable.NoteView)
         try {
-            if (backgroundColor == defaultBackgroundColor) {
-                backgroundColor = typedArray.getColor(
-                    R.styleable.NoteView_noteBackgroundColor,
-                    backgroundColor
-                )
-            }
-            if (textColor == defaultTextColor) {
-                textColor = typedArray.getColor(
-                    R.styleable.NoteView_noteTextColor,
-                    textColor
-                )
-            }
+            backgroundColor = typedArray.getColor(
+                R.styleable.NoteView_noteBackgroundColor,
+                defaultBackgroundColor
+            )
+            textColor = typedArray.getColor(
+                R.styleable.NoteView_noteTextColor,
+                defaultTextColor
+            )
         } finally {
             typedArray.recycle()
         }

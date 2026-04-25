@@ -45,25 +45,25 @@ fun EditNoteScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf(note.title) }
-    var body by remember { mutableStateOf(note.body) }
-    var isImportant by remember { mutableStateOf(note.isImportant) }
-    var isTitleFilled by remember { mutableStateOf(false) }
-    var showTitleError by remember { mutableStateOf(false) }
-    var isRead by remember { mutableStateOf(note.isRead) }
+    LaunchedEffect(Unit) {
+        viewModel.onTitleChanged(note.title)
+        viewModel.onBodyChanged(note.body)
+        viewModel.onImportanceChanged(note.isImportant)
+        viewModel.onReadChanged(note.isRead)
+    }
+
+    var title by remember { mutableStateOf("") }.apply { value = viewModel.title }
+    var body by remember { mutableStateOf("") }.apply { value = viewModel.body }
+    val isImportant = viewModel.isImportant
+    val isTitleFilled = viewModel.isTitleFilled
+    val showTitleError = viewModel.showTitleError
+    val isRead = viewModel.isRead
 
     val starColor = colorResource(R.color.star_color)
     val buttonColor = colorResource(R.color.title_rect_color)
 
     BackHandler(enabled = true) {
         onBack()
-    }
-
-    LaunchedEffect(title) {
-        if (title.isNotBlank()) {
-            isTitleFilled = true
-            showTitleError
-        }
     }
 
     Column(
@@ -90,7 +90,7 @@ fun EditNoteScreen(
 
             Checkbox(
                 checked = isRead,
-                onCheckedChange = { isRead = !isRead },
+                onCheckedChange = { viewModel.onReadChanged(!isRead) },
                 colors = CheckboxDefaults.colors(
                     checkedColor = buttonColor,
                     uncheckedColor = MaterialTheme.colorScheme.onSurface .copy(alpha = 0.5f)
@@ -101,7 +101,7 @@ fun EditNoteScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.Start)
-                .clickable { isImportant = !isImportant }
+                .clickable { viewModel.onImportanceChanged(!isImportant) }
                 .padding(4.dp)
         ) {
             val icon = if (!isImportant) "☆" else "★"
@@ -115,7 +115,7 @@ fun EditNoteScreen(
         OutlinedTextField(
             value = title,
             onValueChange = { newTitle ->
-                title = newTitle
+                viewModel.onTitleChanged(newTitle)
             },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -139,7 +139,7 @@ fun EditNoteScreen(
         OutlinedTextField(
             value = body,
             onValueChange = { newBody ->
-                body = newBody },
+                viewModel.onBodyChanged(newBody) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.note_text)) },
             minLines = 4,
@@ -154,7 +154,7 @@ fun EditNoteScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if (!isTitleFilled) {
-                    showTitleError = true
+                    viewModel.onShowTitleErrorChanged(true)
                 } else {
                     viewModel.editNote(
                         note = note,

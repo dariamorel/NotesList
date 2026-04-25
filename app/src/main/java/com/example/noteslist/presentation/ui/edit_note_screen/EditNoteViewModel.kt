@@ -1,5 +1,8 @@
 package com.example.noteslist.presentation.ui.edit_note_screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.noteslist.data.NotesRepository
@@ -11,6 +14,41 @@ import kotlinx.coroutines.launch
 
 class EditNoteViewModel(
 ): ViewModel() {
+    var title by mutableStateOf("")
+    var body by mutableStateOf("")
+    var isImportant by mutableStateOf(false)
+    var isTitleFilled by mutableStateOf(false)
+    var showTitleError by mutableStateOf(false)
+
+    var isRead by mutableStateOf(false)
+
+    fun onTitleChanged(newTitle: String) {
+        title = newTitle
+        if (newTitle.isBlank()) {
+            isTitleFilled = false
+        } else {
+            isTitleFilled = true
+            if (showTitleError) {
+                showTitleError = false
+            }
+        }
+    }
+
+    fun onBodyChanged(newBody: String) {
+        body = newBody
+    }
+
+    fun onImportanceChanged(newIsImportant: Boolean) {
+        isImportant = newIsImportant
+    }
+
+    fun onShowTitleErrorChanged(newShowTitleError: Boolean) {
+        showTitleError = newShowTitleError
+    }
+
+    fun onReadChanged(newIsRead: Boolean) {
+        isRead = newIsRead
+    }
 
     fun editNote(note: Note, newTitle: String? = null, newBody: String? = null, newIsRead: Boolean? = null, newIsImportant: Boolean? = null) {
         viewModelScope.launch(Dispatchers.IO) {

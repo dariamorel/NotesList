@@ -40,24 +40,17 @@ fun AddNoteScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var body by remember { mutableStateOf("") }
-    var isImportant by remember { mutableStateOf(false) }
-    var isTitleFilled by remember { mutableStateOf(false) }
-    var showTitleError by remember { mutableStateOf(false) }
+    var title by remember { mutableStateOf("") }.apply { value = viewModel.title }
+    var body by remember { mutableStateOf("") }.apply { value = viewModel.body }
+    val isImportant = viewModel.isImportant
+    val isTitleFilled = viewModel.isTitleFilled
+    val showTitleError = viewModel.showTitleError
 
     val starColor = colorResource(R.color.star_color)
     val buttonColor = colorResource(R.color.title_rect_color)
 
     BackHandler(enabled = true) {
         onBack()
-    }
-
-    LaunchedEffect(title) {
-        if (title.isNotBlank()) {
-            isTitleFilled = true
-            showTitleError
-        }
     }
 
     Column(
@@ -69,7 +62,7 @@ fun AddNoteScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.Start)
-                .clickable { isImportant = !isImportant }
+                .clickable { viewModel.toggleImportance() }
                 .padding(4.dp)
         ) {
             val icon = if (!isImportant) "☆" else "★"
@@ -83,7 +76,7 @@ fun AddNoteScreen(
         OutlinedTextField(
             value = title,
             onValueChange = { newTitle ->
-                title = newTitle
+                viewModel.onTitleChanged(newTitle)
             },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -107,7 +100,7 @@ fun AddNoteScreen(
         OutlinedTextField(
             value = body,
             onValueChange = { newBody ->
-                body = newBody },
+                viewModel.onBodyChanged(newBody) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.note_text)) },
             minLines = 4,
@@ -122,7 +115,7 @@ fun AddNoteScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if (!isTitleFilled) {
-                    showTitleError = true
+                    viewModel.onShowTitleErrorChanged(true)
                 } else {
                     viewModel.addNewNote(title, body, isImportant)
                     onBack()
