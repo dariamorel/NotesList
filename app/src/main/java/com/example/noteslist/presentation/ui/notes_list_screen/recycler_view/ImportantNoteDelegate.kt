@@ -9,7 +9,8 @@ import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ite
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
 
 class ImportantNoteDelegate(
-    private val viewModel: NotesListViewModel,
+    private val onImportanceChanged: (Note, Boolean) -> Unit,
+    private val onReadChanged: (Note, Boolean) -> Unit,
     private val onClick: (Note) -> Unit
 ) : AdapterDelegate {
 
@@ -30,13 +31,13 @@ class ImportantNoteDelegate(
         view.setNote(noteItem.note)
         view.setOnChangeListener(object : NoteView.OnChangeListener {
             override fun onImportanceChanged(isImportant: Boolean) {
-                viewModel.changeImportance(noteItem.note, isImportant)
+                onImportanceChanged(noteItem.note, isImportant)
             }
         })
 
         view.setOnLongClickListener {
             val note = noteItem.note
-            viewModel.changeRead(note, !note.isRead)
+            onReadChanged(note, !note.isRead)
             true
         }
     }

@@ -48,14 +48,28 @@ class NotesListFragment(): Fragment() {
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
+        val onImportanceChanged = { note: Note, isImportant: Boolean ->
+            viewModel.changeImportance(note, isImportant)
+        }
+
+        val onReadChanged = { note: Note, isRead: Boolean ->
+            viewModel.changeRead(note, isRead)
+        }
+
         notesAdapter = NotesAdapter(
             listOf(
-                ImportantNoteDelegate(viewModel) { note ->
+                ImportantNoteDelegate(
+                    onImportanceChanged = onImportanceChanged,
+                    onReadChanged = onReadChanged,
+                ) { note ->
                     findNavController().navigate(
                         NotesListFragmentDirections.navigateToEditNoteFragment(note)
                     )
                 },
-                NoteStackDelegate(viewModel),
+                NoteStackDelegate(
+                    onImportanceChanged = onImportanceChanged,
+                    onReadChanged = onReadChanged
+                ),
                 DateHeaderDelegate()
             )
         )

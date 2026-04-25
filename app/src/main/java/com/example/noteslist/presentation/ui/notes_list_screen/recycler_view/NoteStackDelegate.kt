@@ -6,10 +6,10 @@ import com.example.noteslist.domain.Note
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
 import com.example.noteslist.presentation.ui.notes_list_screen.NoteStackView
-import com.example.noteslist.presentation.ui.notes_list_screen.NotesListViewModel
 
 class NoteStackDelegate(
-    private val viewModel: NotesListViewModel
+    private val onImportanceChanged: (Note, Boolean) -> Unit,
+    private val onReadChanged: (Note, Boolean) -> Unit
 ) : AdapterDelegate {
 
     override fun isViewType(item: NotesItem) =
@@ -19,11 +19,11 @@ class NoteStackDelegate(
         val view = NoteStackView(parent.context)
         view.setOnChangeListener(object : NoteStackView.OnChangeListener {
             override fun onImportanceChanged(note: Note, isImportant: Boolean) {
-                viewModel.changeImportance(note, isImportant)
+                this@NoteStackDelegate.onImportanceChanged(note, isImportant)
             }
 
             override fun onReadChanged(note: Note, isRead: Boolean) {
-                viewModel.changeRead(note, isRead)
+                this@NoteStackDelegate.onReadChanged(note, isRead)
             }
 
         })
