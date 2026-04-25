@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen
+package com.example.noteslist.presentation.ui.notes_list_screen
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -10,27 +10,25 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteslist.Application
 import com.example.noteslist.R
-import com.example.noteslist.databinding.FragmentRecyclerViewBinding
+import com.example.noteslist.databinding.FragmentNotesListBinding
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.DateHeaderDelegate
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.ImportantNoteDelegate
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.NoteStackDelegate
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.NotesAdapter
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.DateItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.ImportantNoteItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NoteStackItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.DateHeaderDelegate
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ImportantNoteDelegate
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.NoteStackDelegate
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.NotesAdapter
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.DateItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
 import com.example.noteslist.presentation.view_model.NotesViewModel
 import kotlinx.coroutines.launch
 
-class RecyclerViewFragment(): Fragment() {
-    private var _binding: FragmentRecyclerViewBinding? = null
+class NotesListFragment(): Fragment() {
+    private var _binding: FragmentNotesListBinding ? = null
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
 
@@ -39,7 +37,7 @@ class RecyclerViewFragment(): Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRecyclerViewBinding.inflate(inflater, container, false)
+        _binding = FragmentNotesListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,7 +52,7 @@ class RecyclerViewFragment(): Fragment() {
             listOf(
                 ImportantNoteDelegate(viewModel) { note ->
                     findNavController().navigate(
-                        RecyclerViewFragmentDirections.navigateToEditNoteFragment(note)
+                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
                     )
                 },
                 NoteStackDelegate(viewModel),
@@ -77,9 +75,9 @@ class RecyclerViewFragment(): Fragment() {
             })
         }
 
-        binding.addButton?.setOnClickListener {
+        binding.addButton.setOnClickListener {
             findNavController().navigate(
-                RecyclerViewFragmentDirections.Companion.navigateToAddNoteFragment()
+                NotesListFragmentDirections.Companion.navigateToAddNoteFragment()
             )
         }
 

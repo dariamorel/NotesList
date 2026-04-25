@@ -1,11 +1,11 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view
+package com.example.noteslist.presentation.ui.notes_list_screen.recycler_view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NoteStackItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.NoteStackView
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.notes_list_screen.NoteStackView
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class NoteStackDelegate(

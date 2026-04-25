@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen
+package com.example.noteslist.presentation.ui.notes_list_screen
 
 import android.content.Context
 import android.graphics.Canvas

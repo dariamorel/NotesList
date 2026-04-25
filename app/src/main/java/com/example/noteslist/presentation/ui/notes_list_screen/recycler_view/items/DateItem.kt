@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items
+package com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

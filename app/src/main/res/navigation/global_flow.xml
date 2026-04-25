@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/global_flow"
-    app:startDestination="@id/recyclerViewFragment">
+    app:startDestination="@id/notesListFragment">
 
     <fragment
-        android:id="@+id/recyclerViewFragment"
-        android:name="com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragment"
-        tools:layout="@layout/fragment_recycler_view" >
+        android:id="@+id/notesListFragment"
+        android:name="com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragment"
+        tools:layout="@layout/fragment_notes_list" >
 
         <action
             android:id="@+id/navigateToAddNoteFragment"
@@ -27,19 +27,17 @@
 
     <fragment
         android:id="@+id/addNoteFragment"
-        android:name="com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragment"
-        tools:layout="@layout/fragment_add_note">
+        android:name="com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragment">
 
         <action
             android:id="@+id/navigateToRecyclerViewFragment"
-            app:destination="@id/recyclerViewFragment" />
+            app:destination="@id/notesListFragment" />
 
     </fragment>
 
     <fragment
         android:id="@+id/editNoteFragment"
-        android:name="com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragment"
-        tools:layout="@layout/fragment_edit_note">
+        android:name="com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragment">
 
         <argument
             android:name="note"
@@ -48,7 +46,7 @@
 
         <action
             android:id="@+id/navigateToRecyclerViewFragment"
-            app:destination="@id/recyclerViewFragment" />
+            app:destination="@id/notesListFragment" />
 
     </fragment>
 

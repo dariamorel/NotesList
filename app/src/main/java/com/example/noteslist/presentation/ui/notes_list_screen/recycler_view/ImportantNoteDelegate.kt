@@ -1,14 +1,11 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view
+package com.example.noteslist.presentation.ui.notes_list_screen.recycler_view
 
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteslist.Application
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
-import com.example.noteslist.presentation.ui.recycler_view_screen.RecyclerViewFragmentDirections
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.ImportantNoteItem
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.notes_list_screen.NoteView
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
 import com.example.noteslist.presentation.view_model.NotesViewModel
 
 class ImportantNoteDelegate(

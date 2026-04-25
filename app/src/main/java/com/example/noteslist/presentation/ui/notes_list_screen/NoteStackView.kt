@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen
+package com.example.noteslist.presentation.ui.notes_list_screen
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,14 +9,9 @@ import android.view.animation.PathInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.example.noteslist.Application
 import com.example.noteslist.R
 import com.example.noteslist.domain.Note
-import com.example.noteslist.presentation.ui.recycler_view_screen.NoteView
-import com.example.noteslist.presentation.view_model.NotesViewModel
 import com.google.android.material.button.MaterialButton
 import kotlin.math.min
 
@@ -73,7 +68,7 @@ class NoteStackView @JvmOverloads constructor(
 
                 noteView.setOnClickListener {
                     findNavController().navigate(
-                        RecyclerViewFragmentDirections.navigateToEditNoteFragment(note)
+                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
                     )
                 }
 

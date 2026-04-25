@@ -1,8 +1,8 @@
-package com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view
+package com.example.noteslist.presentation.ui.notes_list_screen.recycler_view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteslist.presentation.ui.recycler_view_screen.recycler_view.items.NotesItem
+import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
 
 interface AdapterDelegate {
     fun isViewType(item: NotesItem): Boolean
