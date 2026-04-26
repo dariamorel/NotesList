@@ -40,6 +40,8 @@ class NoteStackView @JvmOverloads constructor(
 
     // Callback
     private var callback: OnChangeListener? = null
+
+    private var onClick: (Note) -> Unit = {}
     private val showBackButtonRunnable = Runnable {
         if (!isExpanded) return@Runnable
         showBackButtonAnimated()
@@ -67,9 +69,7 @@ class NoteStackView @JvmOverloads constructor(
                 noteView.setNote(note)
 
                 noteView.setOnClickListener {
-                    findNavController().navigate(
-                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
-                    )
+                    onClick(note)
                 }
 
                 noteView.setOnLongClickListener {
@@ -276,6 +276,10 @@ class NoteStackView @JvmOverloads constructor(
 
     fun setOnChangeListener(callback: OnChangeListener) {
         this.callback = callback
+    }
+
+    fun setOnClick(callback: (Note) -> Unit) {
+        onClick = callback
     }
 
     interface OnChangeListener {

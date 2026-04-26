@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +28,7 @@ import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ite
 import kotlinx.coroutines.launch
 
 class NotesListFragment(): Fragment() {
-    private var _binding: FragmentNotesListBinding ? = null
+    private var _binding: FragmentNotesListBinding? = null
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
 
@@ -69,7 +69,11 @@ class NotesListFragment(): Fragment() {
                 NoteStackDelegate(
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged
-                ),
+                ) { note ->
+                    findNavController().navigate(
+                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
+                    )
+                },
                 DateHeaderDelegate()
             )
         )

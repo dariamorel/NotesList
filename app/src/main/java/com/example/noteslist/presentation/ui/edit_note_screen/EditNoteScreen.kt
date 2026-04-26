@@ -115,6 +115,7 @@ fun EditNoteScreen(
         OutlinedTextField(
             value = title,
             onValueChange = { newTitle ->
+                title = newTitle
                 viewModel.onTitleChanged(newTitle)
             },
             modifier = Modifier.fillMaxWidth(),
@@ -139,6 +140,7 @@ fun EditNoteScreen(
         OutlinedTextField(
             value = body,
             onValueChange = { newBody ->
+                body = newBody
                 viewModel.onBodyChanged(newBody) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.note_text)) },
