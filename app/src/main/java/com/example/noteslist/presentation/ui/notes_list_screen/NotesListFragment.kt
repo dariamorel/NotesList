@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -23,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.R
 import com.example.noteslist.databinding.FragmentNotesListBinding
 import com.example.noteslist.domain.Note
+import com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragmentDirections
+import com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragmentDirections
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.DateHeaderDelegate
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ImportantNoteDelegate
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.NoteStackDelegate
@@ -39,6 +42,7 @@ class NotesListFragment(): Fragment() {
     private lateinit var notesAdapter: NotesAdapter
 
     private val viewModel by viewModels<NotesListViewModel>()
+    private var navControllerDetail: NavController? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,13 +50,12 @@ class NotesListFragment(): Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentNotesListBinding.inflate(inflater, container, false)
+        navControllerDetail = (requireActivity().supportFragmentManager.findFragmentById(R.id.detail) as? NavHostFragment)?.navController
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val navControllerDetail = (requireActivity().supportFragmentManager.findFragmentById(R.id.detail) as? NavHostFragment)?.navController
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
@@ -64,40 +67,48 @@ class NotesListFragment(): Fragment() {
             viewModel.changeRead(note, isRead)
         }
 
+        val onNoteClick = { note: Note ->
+            when (resources.configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    when (navControllerDetail?.currentDestination?.id) {
+                        R.id.emptyFragment -> {
+                            navControllerDetail?.navigate(
+                                EmptyFragmentDirections.navigateToEditNoteFragment(note)
+                            )
+                        }
+                        R.id.addNoteFragmentDetail -> {
+                            navControllerDetail?.navigate(
+                                AddNoteFragmentDirections.navigateToEditNoteFragmentDetail(note)
+                            )
+                        }
+
+                        R.id.editNoteFragmentDetail -> {
+                            navControllerDetail?.navigate(
+                                EditNoteFragmentDirections.navigateToEditNoteFragmentDetail(note)
+                            )
+                        }
+                    }
+                }
+                else -> {
+                    findNavController().navigate(
+                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
+                    )
+                }
+            }
+        }
+
         notesAdapter = NotesAdapter(
             listOf(
                 ImportantNoteDelegate(
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged,
-                ) { note ->
-                    when (resources.configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            val args = bundleOf("note" to note)
-                            navControllerDetail?.navigate(R.id.editNoteFragmentDetail, args)
-                        }
-                        else -> {
-                            findNavController().navigate(
-                                NotesListFragmentDirections.navigateToEditNoteFragment(note)
-                            )
-                        }
-                    }
-                },
+                    onClick = onNoteClick
+                ),
                 NoteStackDelegate(
                     onImportanceChanged = onImportanceChanged,
-                    onReadChanged = onReadChanged
-                ) { note ->
-                    when (resources.configuration.orientation) {
-                        Configuration.ORIENTATION_LANDSCAPE -> {
-                            val args = bundleOf("note" to note)
-                            navControllerDetail?.navigate(R.id.editNoteFragmentDetail, args)
-                        }
-                        else -> {
-                            findNavController().navigate(
-                                NotesListFragmentDirections.navigateToEditNoteFragment(note)
-                            )
-                        }
-                    }
-                },
+                    onReadChanged = onReadChanged,
+                    onNoteClick = onNoteClick
+                ),
                 DateHeaderDelegate()
             )
         )
@@ -117,10 +128,27 @@ class NotesListFragment(): Fragment() {
             })
         }
 
+
+
         binding.addButton.setOnClickListener {
             when (resources.configuration.orientation) {
                 Configuration.ORIENTATION_LANDSCAPE -> {
-                    navControllerDetail?.navigate(R.id.addNoteFragmentDetail)
+                    when (navControllerDetail?.currentDestination?.id) {
+                        R.id.emptyFragment -> {
+                            navControllerDetail?.navigate(
+                                EmptyFragmentDirections.navigateToAddNoteFragment()
+                            )
+                        }
+
+                        R.id.addNoteFragmentDetail -> {
+                        }
+
+                        R.id.editNoteFragmentDetail -> {
+                            navControllerDetail?.navigate(
+                                EditNoteFragmentDirections.navigateToAddNoteFragmentDetail()
+                            )
+                        }
+                    }
                 }
                 else -> {
                     findNavController().navigate(

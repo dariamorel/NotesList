@@ -11,19 +11,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.noteslist.R
 
 class EditNoteFragment: Fragment() {
     private val args: EditNoteFragmentArgs by navArgs()
 
     private val viewModel by viewModels<EditNoteViewModel>()
+    private var navControllerDetail: NavController? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        navControllerDetail = (requireActivity().supportFragmentManager.findFragmentById(R.id.detail) as? NavHostFragment)?.navController
 
         return ComposeView(requireContext()).apply {
             setContent {
@@ -35,6 +40,7 @@ class EditNoteFragment: Fragment() {
                     ) {
                         when (resources.configuration.orientation) {
                             Configuration.ORIENTATION_LANDSCAPE -> {
+                                navControllerDetail?.popBackStack()
                             }
                             else -> {
                                 findNavController().popBackStack()

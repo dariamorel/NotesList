@@ -12,11 +12,13 @@
 
         <action
             android:id="@+id/navigateToAddNoteFragment"
-            app:destination="@id/addNoteFragment" />
+            app:destination="@id/addNoteFragment"
+            app:popUpTo="@id/notesListFragment"/>
 
         <action
             android:id="@+id/navigateToEditNoteFragment"
-            app:destination="@id/editNoteFragment">
+            app:destination="@id/editNoteFragment"
+            app:popUpTo="@id/notesListFragment">
 
             <argument
                 android:name="note"
@@ -31,7 +33,8 @@
 
         <action
             android:id="@+id/navigateToRecyclerViewFragment"
-            app:destination="@id/notesListFragment" />
+            app:destination="@id/notesListFragment"
+            app:popUpTo="@id/notesListFragment"/>
 
     </fragment>
 
@@ -46,7 +49,8 @@
 
         <action
             android:id="@+id/navigateToRecyclerViewFragment"
-            app:destination="@id/notesListFragment" />
+            app:destination="@id/notesListFragment"
+            app:popUpTo="@id/notesListFragment"/>
 
     </fragment>
 

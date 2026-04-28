@@ -1,5 +1,6 @@
 package com.example.noteslist.presentation.ui.add_note_screen
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +33,10 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import com.example.noteslist.R
+import com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragmentDirections
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

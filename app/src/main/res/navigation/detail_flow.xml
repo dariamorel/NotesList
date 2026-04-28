@@ -10,11 +10,13 @@
 
         <action
             android:id="@+id/navigateToAddNoteFragment"
-            app:destination="@id/addNoteFragmentDetail" />
+            app:destination="@id/addNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment"/>
 
         <action
             android:id="@+id/navigateToEditNoteFragment"
-            app:destination="@id/editNoteFragmentDetail">
+            app:destination="@id/editNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment">
 
             <argument
                 android:name="note"
@@ -28,12 +30,14 @@
         android:name="com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragment">
 
         <action
-            android:id="@+id/navigateToEditNoteFragment"
-            app:destination="@id/editNoteFragmentDetail" />
+            android:id="@+id/navigateToEditNoteFragmentDetail"
+            app:destination="@id/editNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment" />
 
         <action
-            android:id="@+id/navigateToEmptyFragment"
-            app:destination="@id/emptyFragment" />
+            android:id="@+id/navigateToEmptyFragmentDetail"
+            app:destination="@id/emptyFragment"
+            app:popUpTo="@id/emptyFragment"/>
 
     </fragment>
 
@@ -47,12 +51,19 @@
             app:nullable="false" />
 
         <action
-            android:id="@+id/navigateToAddNoteFragment"
-            app:destination="@id/addNoteFragmentDetail" />
+            android:id="@+id/navigateToAddNoteFragmentDetail"
+            app:destination="@id/addNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment"/>
 
         <action
-            android:id="@+id/navigateToEmptyFragment"
-            app:destination="@id/emptyFragment" />
+            android:id="@+id/navigateToEmptyFragmentDetail"
+            app:destination="@id/emptyFragment"
+            app:popUpTo="@id/emptyFragment"/>
+
+        <action
+            android:id="@+id/navigateToEditNoteFragmentDetail"
+            app:destination="@id/editNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment" />
 
     </fragment>
 
