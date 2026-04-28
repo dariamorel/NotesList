@@ -1,5 +1,6 @@
 package com.example.noteslist.presentation.ui.edit_note_screen
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +33,13 @@ class EditNoteFragment: Fragment() {
                         viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        findNavController().navigate(
-                            EditNoteFragmentDirections.navigateToRecyclerViewFragment()
-                        )
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                            }
+                            else -> {
+                                findNavController().popBackStack()
+                            }
+                        }
                     }
                 }
             }

@@ -1,16 +1,22 @@
 package com.example.noteslist.presentation.ui.notes_list_screen
 
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,6 +52,8 @@ class NotesListFragment(): Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val navControllerDetail = (requireActivity().supportFragmentManager.findFragmentById(R.id.detail) as? NavHostFragment)?.navController
+
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
         val onImportanceChanged = { note: Note, isImportant: Boolean ->
@@ -62,17 +70,33 @@ class NotesListFragment(): Fragment() {
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged,
                 ) { note ->
-                    findNavController().navigate(
-                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
-                    )
+                    when (resources.configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            val args = bundleOf("note" to note)
+                            navControllerDetail?.navigate(R.id.editNoteFragmentDetail, args)
+                        }
+                        else -> {
+                            findNavController().navigate(
+                                NotesListFragmentDirections.navigateToEditNoteFragment(note)
+                            )
+                        }
+                    }
                 },
                 NoteStackDelegate(
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged
                 ) { note ->
-                    findNavController().navigate(
-                        NotesListFragmentDirections.navigateToEditNoteFragment(note)
-                    )
+                    when (resources.configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            val args = bundleOf("note" to note)
+                            navControllerDetail?.navigate(R.id.editNoteFragmentDetail, args)
+                        }
+                        else -> {
+                            findNavController().navigate(
+                                NotesListFragmentDirections.navigateToEditNoteFragment(note)
+                            )
+                        }
+                    }
                 },
                 DateHeaderDelegate()
             )
@@ -94,9 +118,16 @@ class NotesListFragment(): Fragment() {
         }
 
         binding.addButton.setOnClickListener {
-            findNavController().navigate(
-                NotesListFragmentDirections.Companion.navigateToAddNoteFragment()
-            )
+            when (resources.configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    navControllerDetail?.navigate(R.id.addNoteFragmentDetail)
+                }
+                else -> {
+                    findNavController().navigate(
+                        NotesListFragmentDirections.Companion.navigateToAddNoteFragment()
+                    )
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

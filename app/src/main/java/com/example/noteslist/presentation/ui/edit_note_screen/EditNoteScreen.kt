@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -66,114 +67,128 @@ fun EditNoteScreen(
         onBack()
     }
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            text = note.getCreateTimeFormatted(),
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        item {
             Text(
-                text = stringResource(R.string.is_read),
+                text = note.getCreateTimeFormatted(),
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
+        }
+        item {
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.is_read),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-            Checkbox(
-                checked = isRead,
-                onCheckedChange = { viewModel.onReadChanged(!isRead) },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = buttonColor,
-                    uncheckedColor = MaterialTheme.colorScheme.onSurface .copy(alpha = 0.5f)
+                Checkbox(
+                    checked = isRead,
+                    onCheckedChange = { viewModel.onReadChanged(!isRead) },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = buttonColor,
+                        uncheckedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    )
+                )
+            }
+        }
+
+        item {
+            Box(
+                modifier = Modifier
+                    .clickable { viewModel.onImportanceChanged(!isImportant) }
+                    .padding(4.dp)
+            ) {
+                val icon = if (!isImportant) "☆" else "★"
+                Text(
+                    text = icon,
+                    color = starColor,
+                    fontSize = 30.sp
+                )
+            }
+        }
+
+        item {
+            OutlinedTextField(
+                value = title,
+                onValueChange = { newTitle ->
+                    title = newTitle
+                    viewModel.onTitleChanged(newTitle)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                label = { Text(stringResource(R.string.title)) },
+                isError = showTitleError,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
                 )
             )
         }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .clickable { viewModel.onImportanceChanged(!isImportant) }
-                .padding(4.dp)
-        ) {
-            val icon = if (!isImportant) "☆" else "★"
-            Text(
-                text = icon,
-                color = starColor,
-                fontSize = 30.sp
-            )
-        }
-
-        OutlinedTextField(
-            value = title,
-            onValueChange = { newTitle ->
-                title = newTitle
-                viewModel.onTitleChanged(newTitle)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            label = { Text(stringResource(R.string.title)) },
-            isError = showTitleError,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            )
-        )
-
         if (showTitleError) {
-            Text(
-                text = stringResource(R.string.neet_to_fill),
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall
+            item {
+                Text(
+                    text = stringResource(R.string.neet_to_fill),
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        item {
+            OutlinedTextField(
+                value = body,
+                onValueChange = { newBody ->
+                    body = newBody
+                    viewModel.onBodyChanged(newBody)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.note_text)) },
+                minLines = 4,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
             )
         }
 
-        OutlinedTextField(
-            value = body,
-            onValueChange = { newBody ->
-                body = newBody
-                viewModel.onBodyChanged(newBody) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.note_text)) },
-            minLines = 4,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            )
-        )
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                if (!isTitleFilled) {
-                    viewModel.onShowTitleErrorChanged(true)
-                } else {
-                    viewModel.editNote(
-                        note = note,
-                        newTitle = title,
-                        newBody = body,
-                        newIsRead = isRead,
-                        newIsImportant = isImportant
-                    )
-                    onBack()
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor,
-                disabledContainerColor = buttonColor
-            )
-        ) {
-            Text(stringResource(R.string.save))
+        item {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    if (!isTitleFilled) {
+                        viewModel.onShowTitleErrorChanged(true)
+                    } else {
+                        viewModel.editNote(
+                            note = note,
+                            newTitle = title,
+                            newBody = body,
+                            newIsRead = isRead,
+                            newIsImportant = isImportant
+                        )
+                        onBack()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    disabledContainerColor = buttonColor
+                )
+            ) {
+                Text(stringResource(R.string.save))
+            }
         }
     }
 }

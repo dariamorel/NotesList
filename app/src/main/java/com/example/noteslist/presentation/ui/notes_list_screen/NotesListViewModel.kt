@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.noteslist.data.NotesRepository
 import com.example.noteslist.domain.Note
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NotesListViewModel(

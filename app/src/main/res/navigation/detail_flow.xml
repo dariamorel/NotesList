@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detail_flow"
+    app:startDestination="@id/emptyFragment">
+
+    <fragment
+        android:id="@+id/emptyFragment"
+        android:name="com.example.noteslist.presentation.ui.notes_list_screen.EmptyFragment">
+
+        <action
+            android:id="@+id/navigateToAddNoteFragment"
+            app:destination="@id/addNoteFragmentDetail" />
+
+        <action
+            android:id="@+id/navigateToEditNoteFragment"
+            app:destination="@id/editNoteFragmentDetail">
+
+            <argument
+                android:name="note"
+                app:argType="com.example.noteslist.domain.Note"
+                app:nullable="false" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNoteFragmentDetail"
+        android:name="com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragment">
+
+        <action
+            android:id="@+id/navigateToEditNoteFragment"
+            app:destination="@id/editNoteFragmentDetail" />
+
+        <action
+            android:id="@+id/navigateToEmptyFragment"
+            app:destination="@id/emptyFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editNoteFragmentDetail"
+        android:name="com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragment">
+
+        <argument
+            android:name="note"
+            app:argType="com.example.noteslist.domain.Note"
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/navigateToAddNoteFragment"
+            app:destination="@id/addNoteFragmentDetail" />
+
+        <action
+            android:id="@+id/navigateToEmptyFragment"
+            app:destination="@id/emptyFragment" />
+
+    </fragment>
+
+</navigation>

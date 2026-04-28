@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,82 +54,92 @@ fun AddNoteScreen(
         onBack()
     }
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .clickable { viewModel.toggleImportance() }
-                .padding(4.dp)
-        ) {
-            val icon = if (!isImportant) "☆" else "★"
-            Text(
-                text = icon,
-                color = starColor,
-                fontSize = 30.sp
-            )
+        item {
+            Box(
+                modifier = Modifier
+                    .clickable { viewModel.toggleImportance() }
+                    .padding(4.dp)
+            ) {
+                val icon = if (!isImportant) "☆" else "★"
+                Text(
+                    text = icon,
+                    color = starColor,
+                    fontSize = 30.sp
+                )
+            }
         }
 
-        OutlinedTextField(
-            value = title,
-            onValueChange = { newTitle ->
-                title = newTitle
-                viewModel.onTitleChanged(newTitle)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            label = { Text(stringResource(R.string.title)) },
-            isError = showTitleError,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+        item {
+            OutlinedTextField(
+                value = title,
+                onValueChange = { newTitle ->
+                    title = newTitle
+                    viewModel.onTitleChanged(newTitle)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                label = { Text(stringResource(R.string.title)) },
+                isError = showTitleError,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
-        )
+        }
 
         if (showTitleError) {
-            Text(
-                text = stringResource(R.string.neet_to_fill),
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall
+            item {
+                Text(
+                    text = stringResource(R.string.neet_to_fill),
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        item {
+            OutlinedTextField(
+                value = body,
+                onValueChange = { newBody ->
+                    body = newBody
+                    viewModel.onBodyChanged(newBody)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.note_text)) },
+                minLines = 4,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
             )
         }
 
-        OutlinedTextField(
-            value = body,
-            onValueChange = { newBody ->
-                body = newBody
-                viewModel.onBodyChanged(newBody) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.note_text)) },
-            minLines = 4,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            )
-        )
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                if (!isTitleFilled) {
-                    viewModel.onShowTitleErrorChanged(true)
-                } else {
-                    viewModel.addNewNote(title, body, isImportant)
-                    onBack()
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor,
-                disabledContainerColor = buttonColor
-            )
-        ) {
-            Text(stringResource(R.string.add))
+        item {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    if (!isTitleFilled) {
+                        viewModel.onShowTitleErrorChanged(true)
+                    } else {
+                        viewModel.addNewNote(title, body, isImportant)
+                        onBack()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    disabledContainerColor = buttonColor
+                )
+            ) {
+                Text(stringResource(R.string.add))
+            }
         }
     }
 }
