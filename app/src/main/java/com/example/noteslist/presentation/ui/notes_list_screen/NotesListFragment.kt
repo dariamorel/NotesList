@@ -36,12 +36,15 @@ import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ite
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
 
 class NotesListFragment(): Fragment() {
     private var _binding: FragmentNotesListBinding? = null
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
+    private var shimmerStartTime = 0L
 
     private val viewModel by viewModels<NotesListViewModel> {
         PresentationComponentHolder.component.createNotesListViewModelFactory()
@@ -60,6 +63,16 @@ class NotesListFragment(): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (viewModel.getIsFirstLoad()) {
+            shimmerStartTime = System.currentTimeMillis()
+            binding.shimmer.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+            binding.shimmer.startShimmer()
+        } else {
+            binding.shimmer.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+        }
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
@@ -173,8 +186,20 @@ class NotesListFragment(): Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.notes.collect { noteList ->
-                    notesAdapter.submitItems(mapNotesToItems(noteList))
+                viewModel.notes.collect { notes ->
+                    if (notes.isNotEmpty()) {
+                        if (viewModel.getIsFirstLoad()) {
+                            val elapsed = System.currentTimeMillis() - shimmerStartTime
+                            val remaining = (500 - elapsed).coerceAtLeast(0)
+                            if (remaining > 0) delay(remaining)
+
+                            binding.shimmer.stopShimmer()
+                            binding.shimmer.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                        }
+
+                        notesAdapter.submitItems(mapNotesToItems(notes))
+                    }
                 }
             }
         }

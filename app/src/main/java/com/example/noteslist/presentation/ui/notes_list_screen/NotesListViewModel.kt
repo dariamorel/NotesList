@@ -14,6 +14,9 @@ class NotesListViewModel(
 ): ViewModel() {
     val notes = notesRepository.notesList
 
+    fun getIsFirstLoad(): Boolean {
+        return settingsRepository.getIsFirstLoad()
+    }
     fun changeImportance(note: Note, isImportant: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val updated = note.copy(

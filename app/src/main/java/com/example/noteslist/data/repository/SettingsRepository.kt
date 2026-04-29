@@ -14,6 +14,22 @@ class SettingsRepository(
         Context.MODE_PRIVATE
     )
 
+    init {
+        if (prefs.contains(FIRST_LOAD_NAME)) {
+            prefs.edit {
+                putBoolean(FIRST_LOAD_NAME, false)
+            }
+        } else {
+            prefs.edit {
+                putBoolean(FIRST_LOAD_NAME, true)
+            }
+        }
+    }
+
+    fun getIsFirstLoad(): Boolean {
+        return prefs.getBoolean(FIRST_LOAD_NAME, true)
+    }
+
     fun getStackSpacingCurrent(): Float {
         return prefs.getFloat(STACK_SPACING_NAME, defaultStackSpacing)
     }
@@ -39,5 +55,6 @@ class SettingsRepository(
         const val STACK_SPACING_NAME = "stack_spacing"
         const val STACK_MAX_VISIBLE_NAME = "stack_max_visible"
         const val DEFAULT_STACK_MAX_VISIBLE = 4
+        const val FIRST_LOAD_NAME = "first_load"
     }
 }
