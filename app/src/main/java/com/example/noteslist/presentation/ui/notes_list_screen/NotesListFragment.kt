@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -45,6 +46,7 @@ class NotesListFragment(): Fragment() {
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
     private var shimmerStartTime = 0L
+    private var currentQuery = ""
 
     private val viewModel by viewModels<NotesListViewModel> {
         PresentationComponentHolder.component.createNotesListViewModelFactory()
@@ -184,9 +186,33 @@ class NotesListFragment(): Fragment() {
             )
         }
 
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newQuery: String): Boolean {
+                if (newQuery != currentQuery) {
+                    currentQuery = newQuery
+                    viewModel.updateSearchQuery(currentQuery)
+                }
+                return true
+            }
+
+            override fun onQueryTextSubmit(newQuery: String): Boolean {
+                if (newQuery != currentQuery) {
+                    currentQuery = newQuery
+                    viewModel.updateSearchQuery(currentQuery)
+                }
+                return true
+            }
+        })
+
+        binding.search.setOnCloseListener {
+            viewModel.clearSearch()
+            currentQuery = ""
+            return@setOnCloseListener false
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.notes.collect { notes ->
+                viewModel.searchResults.collect { notes ->
                     if (notes.isNotEmpty()) {
                         if (viewModel.getIsFirstLoad()) {
                             val elapsed = System.currentTimeMillis() - shimmerStartTime
@@ -201,6 +227,7 @@ class NotesListFragment(): Fragment() {
                         notesAdapter.submitItems(mapNotesToItems(notes))
                     }
                 }
+
             }
         }
     }
@@ -220,5 +247,10 @@ class NotesListFragment(): Fragment() {
             }
         }
         return result
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
