@@ -29,6 +29,11 @@ class SettingsRepository(
     fun getIsFirstLoad(): Boolean {
         return prefs.getBoolean(FIRST_LOAD_NAME, true)
     }
+    fun firstLoadDone() {
+        prefs.edit {
+            putBoolean(FIRST_LOAD_NAME, false)
+        }
+    }
 
     fun getStackSpacingCurrent(): Float {
         return prefs.getFloat(STACK_SPACING_NAME, defaultStackSpacing)

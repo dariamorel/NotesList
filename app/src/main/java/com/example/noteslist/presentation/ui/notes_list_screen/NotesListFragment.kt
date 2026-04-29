@@ -70,10 +70,16 @@ class NotesListFragment(): Fragment() {
             shimmerStartTime = System.currentTimeMillis()
             binding.shimmer.visibility = View.VISIBLE
             binding.recyclerView.visibility = View.GONE
+            binding.search.visibility = View.GONE
+            binding.addButton.visibility = View.GONE
+            binding.settingsButton.visibility = View.GONE
             binding.shimmer.startShimmer()
         } else {
             binding.shimmer.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
+            binding.search.visibility = View.VISIBLE
+            binding.addButton.visibility = View.VISIBLE
+            binding.settingsButton.visibility = View.VISIBLE
         }
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
@@ -216,12 +222,17 @@ class NotesListFragment(): Fragment() {
                     if (notes.isNotEmpty()) {
                         if (viewModel.getIsFirstLoad()) {
                             val elapsed = System.currentTimeMillis() - shimmerStartTime
-                            val remaining = (500 - elapsed).coerceAtLeast(0)
+                            val remaining = (3000 - elapsed).coerceAtLeast(0)
                             if (remaining > 0) delay(remaining)
 
                             binding.shimmer.stopShimmer()
                             binding.shimmer.visibility = View.GONE
                             binding.recyclerView.visibility = View.VISIBLE
+                            binding.search.visibility = View.VISIBLE
+                            binding.addButton.visibility = View.VISIBLE
+                            binding.settingsButton.visibility = View.VISIBLE
+
+                            viewModel.firstLoadDone()
                         }
 
                         notesAdapter.submitItems(mapNotesToItems(notes))
