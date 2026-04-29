@@ -42,14 +42,7 @@ class SettingsFragment: Fragment() {
                         viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        when (resources.configuration.orientation) {
-                            Configuration.ORIENTATION_LANDSCAPE -> {
-                                navControllerDetail?.popBackStack()
-                            }
-                            else -> {
-                                findNavController().popBackStack()
-                            }
-                        }
+                        findNavController().popBackStack()
                     }
                 }
             }
