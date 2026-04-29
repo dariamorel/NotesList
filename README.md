@@ -4,5 +4,7 @@
 
 ### Используемые технологии
 **UI:** View, CustomView, RecyclerView, ViewGroup, делегаты, Jetpack Compose, анимации
+
 **Асинхронность:** Coroutines
+
 **Навигация:** Jetpack Navigation, NavArgs + Parcelable
