@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">NotesList</string>
+    <string name="collapse"><![CDATA[<< Свернуть]]></string>
+    
+    <!-- Add/Edit screen -->
+    <string name="title">Заголовок*</string>
+    <string name="neet_to_fill">необходимо заполнить</string>
+    <string name="note_text">Текст заметки</string>
+    <string name="add">Добавить</string>
+    <string name="save">Сохранить</string>
+    <string name="is_read">Прочитано</string>
 </resources>
