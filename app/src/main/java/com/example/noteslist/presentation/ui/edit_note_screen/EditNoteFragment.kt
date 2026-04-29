@@ -16,11 +16,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.noteslist.R
+import com.example.noteslist.presentation.di.PresentationComponentHolder
 
 class EditNoteFragment: Fragment() {
     private val args: EditNoteFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<EditNoteViewModel>()
+    private val viewModel by viewModels<EditNoteViewModel> {
+        PresentationComponentHolder.component.createEditNoteViewModelFactory()
+    }
     private var navControllerDetail: NavController? = null
 
     override fun onCreateView(

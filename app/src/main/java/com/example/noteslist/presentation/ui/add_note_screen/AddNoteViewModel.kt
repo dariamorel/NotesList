@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.noteslist.data.NotesRepository
+import com.example.noteslist.data.repository.NotesRepository
 import com.example.noteslist.domain.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddNoteViewModel(
+    private val repository: NotesRepository
 ): ViewModel() {
 
     var title by mutableStateOf("")
@@ -47,7 +48,7 @@ class AddNoteViewModel(
 
     fun addNewNote(title: String, body: String, isImportant: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            NotesRepository.addNote(
+            repository.addNote(
                 Note(
                     title = title,
                     body = body,

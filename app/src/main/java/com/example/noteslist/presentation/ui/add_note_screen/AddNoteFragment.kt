@@ -15,11 +15,14 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.noteslist.R
+import com.example.noteslist.presentation.di.PresentationComponentHolder
 import com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragmentDirections
 
 class AddNoteFragment: Fragment() {
 
-    private val viewModel by viewModels<AddNoteViewModel>()
+    private val viewModel by viewModels<AddNoteViewModel> {
+        PresentationComponentHolder.component.createAddNoteViewModelFactory()
+    }
     var navControllerDetail: NavController? = null
 
     override fun onCreateView(

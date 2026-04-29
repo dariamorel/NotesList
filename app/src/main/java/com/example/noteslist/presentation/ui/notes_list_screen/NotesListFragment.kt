@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.R
 import com.example.noteslist.databinding.FragmentNotesListBinding
 import com.example.noteslist.domain.Note
+import com.example.noteslist.presentation.di.PresentationComponent
+import com.example.noteslist.presentation.di.PresentationComponentHolder
 import com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragmentDirections
 import com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragmentDirections
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.DateHeaderDelegate
@@ -41,7 +43,9 @@ class NotesListFragment(): Fragment() {
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
 
-    private val viewModel by viewModels<NotesListViewModel>()
+    private val viewModel by viewModels<NotesListViewModel> {
+        PresentationComponentHolder.component.createNotesListViewModelFactory()
+    }
     private var navControllerDetail: NavController? = null
 
     override fun onCreateView(

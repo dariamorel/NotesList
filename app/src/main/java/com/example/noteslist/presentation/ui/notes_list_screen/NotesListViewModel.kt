@@ -2,21 +2,22 @@ package com.example.noteslist.presentation.ui.notes_list_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.noteslist.data.NotesRepository
+import com.example.noteslist.data.repository.NotesRepository
 import com.example.noteslist.domain.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NotesListViewModel(
+    private val repository: NotesRepository
 ): ViewModel() {
-    val notes = NotesRepository.notesList
+    val notes = repository.notesList
 
     fun changeImportance(note: Note, isImportant: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val updated = note.copy(
                 isImportant = isImportant
             )
-            NotesRepository.editNote(note, updated)
+            repository.editNote(note, updated)
         }
     }
 
@@ -25,7 +26,7 @@ class NotesListViewModel(
             val updated = note.copy(
                 isRead = isRead
             )
-            NotesRepository.editNote(note, updated)
+            repository.editNote(note, updated)
         }
     }
 }
