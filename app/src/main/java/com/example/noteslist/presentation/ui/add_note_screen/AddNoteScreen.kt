@@ -50,6 +50,7 @@ fun AddNoteScreen(
     val isImportant = viewModel.isImportant
     val isTitleFilled = viewModel.isTitleFilled
     val showTitleError = viewModel.showTitleError
+    val showLongTitleError = viewModel.showLongTitleError
 
     val starColor = colorResource(R.color.star_color)
     val buttonColor = colorResource(R.color.title_rect_color)
@@ -108,6 +109,16 @@ fun AddNoteScreen(
             }
         }
 
+        if (showLongTitleError) {
+            item {
+                Text(
+                    text = stringResource(R.string.too_long_title),
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
         item {
             OutlinedTextField(
                 value = body,
@@ -132,7 +143,7 @@ fun AddNoteScreen(
                 onClick = {
                     if (!isTitleFilled) {
                         viewModel.onShowTitleErrorChanged(true)
-                    } else {
+                    } else if (!showLongTitleError) {
                         viewModel.addNewNote(title, body, isImportant)
                         onBack()
                     }

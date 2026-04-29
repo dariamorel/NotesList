@@ -20,6 +20,7 @@ class EditNoteViewModel(
     var isImportant by mutableStateOf(false)
     var isTitleFilled by mutableStateOf(false)
     var showTitleError by mutableStateOf(false)
+    var showLongTitleError by mutableStateOf(false)
 
     var isRead by mutableStateOf(false)
 
@@ -33,6 +34,7 @@ class EditNoteViewModel(
                 showTitleError = false
             }
         }
+        checkTitleLength()
     }
 
     fun onBodyChanged(newBody: String) {
@@ -61,5 +63,15 @@ class EditNoteViewModel(
             )
             repository.editNote(updated)
         }
+    }
+
+    private fun checkTitleLength() {
+        viewModelScope.launch(Dispatchers.Default) {
+            showLongTitleError = title.length > MAX_TITLE_LENGTH
+        }
+    }
+
+    companion object {
+        const val MAX_TITLE_LENGTH = 30
     }
 }

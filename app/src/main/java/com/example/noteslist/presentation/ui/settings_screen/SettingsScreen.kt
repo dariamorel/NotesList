@@ -70,7 +70,8 @@ fun SettingsScreen(
     ) {
         item {
             Box(
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
                     .clickable {
                         onBack()
                     }
@@ -94,7 +95,7 @@ fun SettingsScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Расстояние между стэками заметок") },
+                label = { Text(stringResource(R.string.stack_spacing)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
@@ -112,7 +113,7 @@ fun SettingsScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text("Максимальное видимое количество заметок в стэке") },
+                label = { Text(stringResource(R.string.stack_max_visible)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
@@ -133,7 +134,7 @@ fun SettingsScreen(
                     disabledContainerColor = buttonColor
                 )
             ) {
-                Text("Применить параметры")
+                Text(stringResource(R.string.apply_settings))
             }
         }
     }
