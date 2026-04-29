@@ -101,6 +101,9 @@ class NotesListFragment(): Fragment() {
             }
         }
 
+        val stackSpacing = viewModel.getStackSpacingCurrent()
+        val stackMaxVisible = viewModel.getStackMaxVisibleCurrent()
+
         notesAdapter = NotesAdapter(
             listOf(
                 ImportantNoteDelegate(
@@ -111,7 +114,9 @@ class NotesListFragment(): Fragment() {
                 NoteStackDelegate(
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged,
-                    onNoteClick = onNoteClick
+                    onNoteClick = onNoteClick,
+                    stackSpacing = stackSpacing,
+                    stackMaxVisible = stackMaxVisible
                 ),
                 DateHeaderDelegate()
             )
@@ -131,8 +136,6 @@ class NotesListFragment(): Fragment() {
                 }
             })
         }
-
-
 
         binding.addButton.setOnClickListener {
             when (resources.configuration.orientation) {
@@ -160,6 +163,12 @@ class NotesListFragment(): Fragment() {
                     )
                 }
             }
+        }
+
+        binding.settingsButton.setOnClickListener {
+            findNavController().navigate(
+            NotesListFragmentDirections.navigateToSettingsFragment()
+            )
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

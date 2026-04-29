@@ -58,6 +58,11 @@ class NoteStackView @JvmOverloads constructor(
         initClicks()
     }
 
+    fun setCustomAttributes(newStackSpacing: Float? = null, newStackMaxVisible: Int? = null) {
+        newStackSpacing?.let { stackSpacing = it }
+        newStackMaxVisible?.let { stackMaxVisible = it }
+    }
+
     fun submitNotes(notes: List<Note>) {
         cancelAnimations()
         removeAllViews()

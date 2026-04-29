@@ -7,17 +7,29 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.noteslist.data.db.DataBase
 import com.example.noteslist.data.db.DataBaseManager
 import com.example.noteslist.data.repository.NotesRepository
+import com.example.noteslist.data.repository.SettingsRepository
 
 class DataComponent(
     private val dependencies: Dependencies
 ) {
-    private val repository by lazy { createNotesRepository() }
+    private val notesRepositoryValue by lazy { createNotesRepository() }
 
     private val dataBase by lazy { createDataBase() }
 
     private val dataBaseManager by lazy { createDataBaseManager() }
+
+    private val settingsRepositoryValue by lazy { createSettingsRepository() }
+
     fun getNotesRepository(): NotesRepository {
-        return repository
+        return notesRepositoryValue
+    }
+
+    fun getSettingsRepository(): SettingsRepository {
+        return settingsRepositoryValue
+    }
+
+    private fun createSettingsRepository(): SettingsRepository {
+        return SettingsRepository(dependencies.getApplicationContext())
     }
 
     private fun createNotesRepository(): NotesRepository {

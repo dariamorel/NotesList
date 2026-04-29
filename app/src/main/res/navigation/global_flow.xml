@@ -25,6 +25,11 @@
                 app:argType="com.example.noteslist.domain.Note"
                 app:nullable="false" />
         </action>
+
+        <action
+            android:id="@+id/navigateToSettingsFragment"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@id/notesListFragment"/>
     </fragment>
 
     <fragment
@@ -91,5 +96,15 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.noteslist.presentation.ui.settings_screen.SettingsFragment">
+
+        <action
+            android:id="@+id/navigateToNotesListFragment"
+            app:destination="@id/notesListFragment"
+            app:popUpTo="@id/notesListFragment"/>
+
+    </fragment>
 
 </navigation>
