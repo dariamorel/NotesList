@@ -59,7 +59,7 @@ class EditNoteViewModel(
                 isRead = newIsRead ?: note.isRead,
                 isImportant = newIsImportant ?: note.isImportant
             )
-            repository.editNote(note, updated)
+            repository.editNote(updated)
         }
     }
 }

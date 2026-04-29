@@ -174,7 +174,7 @@ class NotesListFragment(): Fragment() {
     private fun mapNotesToItems(notes: List<Note>): List<NotesItem> {
         val grouped = notes.groupBy { it.createTime.toLocalDate() }
         val result = mutableListOf<NotesItem>()
-        grouped.keys.sortedDescending().forEach { date ->
+        grouped.keys.forEach { date ->
             result.add(DateItem(date))
             val notesForDate = grouped[date]!!
             notesForDate.filter { it.isImportant }.forEach { note ->

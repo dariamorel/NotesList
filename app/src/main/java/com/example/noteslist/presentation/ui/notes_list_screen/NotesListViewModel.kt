@@ -17,7 +17,7 @@ class NotesListViewModel(
             val updated = note.copy(
                 isImportant = isImportant
             )
-            repository.editNote(note, updated)
+            repository.editNote(updated)
         }
     }
 
@@ -26,7 +26,7 @@ class NotesListViewModel(
             val updated = note.copy(
                 isRead = isRead
             )
-            repository.editNote(note, updated)
+            repository.editNote(updated)
         }
     }
 }

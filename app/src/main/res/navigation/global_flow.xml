@@ -36,6 +36,22 @@
             app:destination="@id/notesListFragment"
             app:popUpTo="@id/notesListFragment"/>
 
+        <action
+            android:id="@+id/navigateToEditNoteFragmentDetail"
+            app:destination="@id/editNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment" >
+
+            <argument
+                android:name="note"
+                app:argType="com.example.noteslist.domain.Note"
+                app:nullable="false" />
+        </action>
+
+        <action
+            android:id="@+id/navigateToEmptyFragmentDetail"
+            app:destination="@id/emptyFragment"
+            app:popUpTo="@id/emptyFragment"/>
+
     </fragment>
 
     <fragment
@@ -51,6 +67,27 @@
             android:id="@+id/navigateToRecyclerViewFragment"
             app:destination="@id/notesListFragment"
             app:popUpTo="@id/notesListFragment"/>
+
+        <action
+            android:id="@+id/navigateToAddNoteFragmentDetail"
+            app:destination="@id/addNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment"/>
+
+        <action
+            android:id="@+id/navigateToEmptyFragmentDetail"
+            app:destination="@id/emptyFragment"
+            app:popUpTo="@id/emptyFragment"/>
+
+        <action
+            android:id="@+id/navigateToEditNoteFragmentDetail"
+            app:destination="@id/editNoteFragmentDetail"
+            app:popUpTo="@id/emptyFragment" >
+
+            <argument
+                android:name="note"
+                app:argType="com.example.noteslist.domain.Note"
+                app:nullable="false" />
+        </action>
 
     </fragment>
 
