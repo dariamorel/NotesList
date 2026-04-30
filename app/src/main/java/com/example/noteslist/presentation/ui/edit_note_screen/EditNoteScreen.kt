@@ -58,6 +58,7 @@ fun EditNoteScreen(
     val isImportant = viewModel.isImportant
     val isTitleFilled = viewModel.isTitleFilled
     val showTitleError = viewModel.showTitleError
+    val showLongTitleError = viewModel.showLongTitleError
     val isRead = viewModel.isRead
 
     val starColor = colorResource(R.color.star_color)
@@ -147,6 +148,16 @@ fun EditNoteScreen(
             }
         }
 
+        if (showLongTitleError) {
+            item {
+                Text(
+                    text = stringResource(R.string.too_long_title),
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
         item {
             OutlinedTextField(
                 value = body,
@@ -171,7 +182,7 @@ fun EditNoteScreen(
                 onClick = {
                     if (!isTitleFilled) {
                         viewModel.onShowTitleErrorChanged(true)
-                    } else {
+                    } else if (!showLongTitleError) {
                         viewModel.editNote(
                             note = note,
                             newTitle = title,

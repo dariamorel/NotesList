@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.R
 import com.example.noteslist.databinding.FragmentNotesListBinding
 import com.example.noteslist.domain.Note
+import com.example.noteslist.presentation.di.PresentationComponent
+import com.example.noteslist.presentation.di.PresentationComponentHolder
 import com.example.noteslist.presentation.ui.add_note_screen.AddNoteFragmentDirections
 import com.example.noteslist.presentation.ui.edit_note_screen.EditNoteFragmentDirections
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.DateHeaderDelegate
@@ -34,14 +37,20 @@ import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.ite
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.ImportantNoteItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NoteStackItem
 import com.example.noteslist.presentation.ui.notes_list_screen.recycler_view.items.NotesItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
 
 class NotesListFragment(): Fragment() {
     private var _binding: FragmentNotesListBinding? = null
     val binding get() = _binding!!
     private lateinit var notesAdapter: NotesAdapter
+    private var shimmerStartTime = 0L
+    private var currentQuery = ""
 
-    private val viewModel by viewModels<NotesListViewModel>()
+    private val viewModel by viewModels<NotesListViewModel> {
+        PresentationComponentHolder.component.createNotesListViewModelFactory()
+    }
     private var navControllerDetail: NavController? = null
 
     override fun onCreateView(
@@ -56,6 +65,22 @@ class NotesListFragment(): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (viewModel.getIsFirstLoad()) {
+            shimmerStartTime = System.currentTimeMillis()
+            binding.shimmer.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+            binding.search.visibility = View.GONE
+            binding.addButton.visibility = View.GONE
+            binding.settingsButton.visibility = View.GONE
+            binding.shimmer.startShimmer()
+        } else {
+            binding.shimmer.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+            binding.search.visibility = View.VISIBLE
+            binding.addButton.visibility = View.VISIBLE
+            binding.settingsButton.visibility = View.VISIBLE
+        }
 
         val spacing = this.resources.getDimension(R.dimen.recycler_vertical_spacing).toInt()
 
@@ -97,6 +122,9 @@ class NotesListFragment(): Fragment() {
             }
         }
 
+        val stackSpacing = viewModel.getStackSpacingCurrent()
+        val stackMaxVisible = viewModel.getStackMaxVisibleCurrent()
+
         notesAdapter = NotesAdapter(
             listOf(
                 ImportantNoteDelegate(
@@ -107,7 +135,9 @@ class NotesListFragment(): Fragment() {
                 NoteStackDelegate(
                     onImportanceChanged = onImportanceChanged,
                     onReadChanged = onReadChanged,
-                    onNoteClick = onNoteClick
+                    onNoteClick = onNoteClick,
+                    stackSpacing = stackSpacing,
+                    stackMaxVisible = stackMaxVisible
                 ),
                 DateHeaderDelegate()
             )
@@ -127,8 +157,6 @@ class NotesListFragment(): Fragment() {
                 }
             })
         }
-
-
 
         binding.addButton.setOnClickListener {
             when (resources.configuration.orientation) {
@@ -158,11 +186,59 @@ class NotesListFragment(): Fragment() {
             }
         }
 
+        binding.settingsButton.setOnClickListener {
+            findNavController().navigate(
+            NotesListFragmentDirections.navigateToSettingsFragment()
+            )
+        }
+
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newQuery: String): Boolean {
+                if (newQuery != currentQuery) {
+                    currentQuery = newQuery
+                    viewModel.updateSearchQuery(currentQuery)
+                }
+                return true
+            }
+
+            override fun onQueryTextSubmit(newQuery: String): Boolean {
+                if (newQuery != currentQuery) {
+                    currentQuery = newQuery
+                    viewModel.updateSearchQuery(currentQuery)
+                }
+                return true
+            }
+        })
+
+        binding.search.setOnCloseListener {
+            viewModel.clearSearch()
+            currentQuery = ""
+            return@setOnCloseListener false
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.notes.collect { noteList ->
-                    notesAdapter.submitItems(mapNotesToItems(noteList))
+                viewModel.searchResults.collect { notes ->
+                    if (notes.isNotEmpty()) {
+                        if (viewModel.getIsFirstLoad()) {
+                            val elapsed = System.currentTimeMillis() - shimmerStartTime
+                            val remaining = (3000 - elapsed).coerceAtLeast(0)
+                            if (remaining > 0) delay(remaining)
+
+                            binding.shimmer.stopShimmer()
+                            binding.shimmer.visibility = View.GONE
+                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.search.visibility = View.VISIBLE
+                            binding.addButton.visibility = View.VISIBLE
+                            binding.settingsButton.visibility = View.VISIBLE
+
+                            viewModel.firstLoadDone()
+                        }
+
+                        notesAdapter.submitItems(mapNotesToItems(notes))
+                    }
                 }
+
             }
         }
     }
@@ -170,7 +246,7 @@ class NotesListFragment(): Fragment() {
     private fun mapNotesToItems(notes: List<Note>): List<NotesItem> {
         val grouped = notes.groupBy { it.createTime.toLocalDate() }
         val result = mutableListOf<NotesItem>()
-        grouped.keys.sortedDescending().forEach { date ->
+        grouped.keys.forEach { date ->
             result.add(DateItem(date))
             val notesForDate = grouped[date]!!
             notesForDate.filter { it.isImportant }.forEach { note ->
@@ -182,5 +258,10 @@ class NotesListFragment(): Fragment() {
             }
         }
         return result
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

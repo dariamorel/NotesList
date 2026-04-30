@@ -32,7 +32,13 @@
         <action
             android:id="@+id/navigateToEditNoteFragmentDetail"
             app:destination="@id/editNoteFragmentDetail"
-            app:popUpTo="@id/emptyFragment" />
+            app:popUpTo="@id/emptyFragment" >
+
+        <argument
+            android:name="note"
+            app:argType="com.example.noteslist.domain.Note"
+            app:nullable="false" />
+        </action>
 
         <action
             android:id="@+id/navigateToEmptyFragmentDetail"
@@ -63,7 +69,13 @@
         <action
             android:id="@+id/navigateToEditNoteFragmentDetail"
             app:destination="@id/editNoteFragmentDetail"
-            app:popUpTo="@id/emptyFragment" />
+            app:popUpTo="@id/emptyFragment" >
+
+            <argument
+                android:name="note"
+                app:argType="com.example.noteslist.domain.Note"
+                app:nullable="false" />
+        </action>
 
     </fragment>
 

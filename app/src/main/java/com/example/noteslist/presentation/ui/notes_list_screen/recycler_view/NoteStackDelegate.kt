@@ -1,6 +1,7 @@
 package com.example.noteslist.presentation.ui.notes_list_screen.recycler_view
 
 import android.view.ViewGroup
+import androidx.compose.ui.unit.dp
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteslist.domain.Note
@@ -12,7 +13,9 @@ import com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragment
 class NoteStackDelegate(
     private val onImportanceChanged: (Note, Boolean) -> Unit,
     private val onReadChanged: (Note, Boolean) -> Unit,
-    private val onNoteClick: (Note) -> Unit
+    private val onNoteClick: (Note) -> Unit,
+    private val stackSpacing: Float,
+    private val stackMaxVisible: Int
 ) : AdapterDelegate {
 
     override fun isViewType(item: NotesItem) =
@@ -31,6 +34,7 @@ class NoteStackDelegate(
             }
 
         })
+        view.setCustomAttributes(stackSpacing, stackMaxVisible)
         return ViewHolder(view)
     }
 

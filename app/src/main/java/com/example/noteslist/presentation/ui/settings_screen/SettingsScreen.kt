@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.add_note_screen
+package com.example.noteslist.presentation.ui.settings_screen
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -9,17 +9,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,23 +43,19 @@ import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.example.noteslist.R
+import com.example.noteslist.presentation.ui.add_note_screen.AddNoteViewModel
 import com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragmentDirections
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNoteScreen(
-    viewModel: AddNoteViewModel,
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }.apply { value = viewModel.title }
-    var body by remember { mutableStateOf("") }.apply { value = viewModel.body }
-    val isImportant = viewModel.isImportant
-    val isTitleFilled = viewModel.isTitleFilled
-    val showTitleError = viewModel.showTitleError
-    val showLongTitleError = viewModel.showLongTitleError
+    var stackSpacing by remember { mutableStateOf("") }.apply { value = viewModel.stackSpacing }
+    var stackMaxVisible by remember { mutableStateOf("") }.apply { value = viewModel.stackMaxVisible }
 
-    val starColor = colorResource(R.color.star_color)
     val buttonColor = colorResource(R.color.title_rect_color)
 
     BackHandler(enabled = true) {
@@ -68,29 +71,31 @@ fun AddNoteScreen(
         item {
             Box(
                 modifier = Modifier
-                    .clickable { viewModel.toggleImportance() }
+                    .size(48.dp)
+                    .clickable {
+                        onBack()
+                    }
                     .padding(4.dp)
             ) {
-                val icon = if (!isImportant) "☆" else "★"
-                Text(
-                    text = icon,
-                    color = starColor,
-                    fontSize = 30.sp
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    tint = Color.Black,
+                    modifier = Modifier,
+                    contentDescription = "back arrow"
                 )
             }
         }
 
         item {
             OutlinedTextField(
-                value = title,
-                onValueChange = { newTitle ->
-                    title = newTitle
-                    viewModel.onTitleChanged(newTitle)
+                value = stackSpacing,
+                onValueChange = { newStackSpacing ->
+                    stackSpacing = newStackSpacing
+                    viewModel.onStackSpacingChanged(newStackSpacing)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                label = { Text(stringResource(R.string.title)) },
-                isError = showTitleError,
+                label = { Text(stringResource(R.string.stack_spacing)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
@@ -99,40 +104,20 @@ fun AddNoteScreen(
             )
         }
 
-        if (showTitleError) {
-            item {
-                Text(
-                    text = stringResource(R.string.neet_to_fill),
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-
-        if (showLongTitleError) {
-            item {
-                Text(
-                    text = stringResource(R.string.too_long_title),
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-
         item {
             OutlinedTextField(
-                value = body,
-                onValueChange = { newBody ->
-                    body = newBody
-                    viewModel.onBodyChanged(newBody)
+                value = stackMaxVisible,
+                onValueChange = { newStackMaxVisible ->
+                    stackMaxVisible = newStackMaxVisible
+                    viewModel.onStackMaxVisibleChanged(newStackMaxVisible)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.note_text)) },
-                minLines = 4,
+                singleLine = true,
+                label = { Text(stringResource(R.string.stack_max_visible)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 )
             )
         }
@@ -141,19 +126,15 @@ fun AddNoteScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    if (!isTitleFilled) {
-                        viewModel.onShowTitleErrorChanged(true)
-                    } else if (!showLongTitleError) {
-                        viewModel.addNewNote(title, body, isImportant)
-                        onBack()
-                    }
+                    viewModel.saveSettings()
+                    onBack()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
                     disabledContainerColor = buttonColor
                 )
             ) {
-                Text(stringResource(R.string.add))
+                Text(stringResource(R.string.apply_settings))
             }
         }
     }

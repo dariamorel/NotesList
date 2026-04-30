@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.noteslist.data.NotesRepository
+import com.example.noteslist.data.repository.NotesRepository
 import com.example.noteslist.domain.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddNoteViewModel(
+    private val repository: NotesRepository
 ): ViewModel() {
 
     var title by mutableStateOf("")
@@ -20,6 +21,7 @@ class AddNoteViewModel(
     var isImportant by mutableStateOf(false)
     var isTitleFilled by mutableStateOf(false)
     var showTitleError by mutableStateOf(false)
+    var showLongTitleError by mutableStateOf(false)
 
     fun onTitleChanged(newTitle: String) {
         title = newTitle
@@ -31,6 +33,7 @@ class AddNoteViewModel(
                 showTitleError = false
             }
         }
+        checkTitleLength()
     }
 
     fun onBodyChanged(newBody: String) {
@@ -47,7 +50,7 @@ class AddNoteViewModel(
 
     fun addNewNote(title: String, body: String, isImportant: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            NotesRepository.addNote(
+            repository.addNote(
                 Note(
                     title = title,
                     body = body,
@@ -55,5 +58,15 @@ class AddNoteViewModel(
                 )
             )
         }
+    }
+
+    private fun checkTitleLength() {
+        viewModelScope.launch(Dispatchers.Default) {
+            showLongTitleError = title.length > MAX_TITLE_LENGTH
+        }
+    }
+
+    companion object {
+        const val MAX_TITLE_LENGTH = 30
     }
 }

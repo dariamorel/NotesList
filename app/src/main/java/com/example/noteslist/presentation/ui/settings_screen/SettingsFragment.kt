@@ -1,4 +1,4 @@
-package com.example.noteslist.presentation.ui.edit_note_screen
+package com.example.noteslist.presentation.ui.settings_screen
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -14,17 +14,19 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.noteslist.R
 import com.example.noteslist.presentation.di.PresentationComponentHolder
+import com.example.noteslist.presentation.ui.add_note_screen.AddNoteScreen
+import com.example.noteslist.presentation.ui.add_note_screen.AddNoteViewModel
+import com.example.noteslist.presentation.ui.notes_list_screen.NotesListFragmentDirections
+import com.example.noteslist.presentation.ui.notes_list_screen.NotesListViewModel
 
-class EditNoteFragment: Fragment() {
-    private val args: EditNoteFragmentArgs by navArgs()
+class SettingsFragment: Fragment() {
+    var navControllerDetail: NavController? = null
 
-    private val viewModel by viewModels<EditNoteViewModel> {
-        PresentationComponentHolder.component.createEditNoteViewModelFactory()
+    private val viewModel by viewModels<SettingsViewModel> {
+        PresentationComponentHolder.component.createSettingsViewModelFactory()
     }
-    private var navControllerDetail: NavController? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,19 +38,11 @@ class EditNoteFragment: Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 Scaffold { innerPadding ->
-                    EditNoteScreen(
-                        note = args.note,
+                    SettingsScreen(
                         viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        when (resources.configuration.orientation) {
-                            Configuration.ORIENTATION_LANDSCAPE -> {
-                                navControllerDetail?.popBackStack()
-                            }
-                            else -> {
-                                findNavController().popBackStack()
-                            }
-                        }
+                        findNavController().popBackStack()
                     }
                 }
             }

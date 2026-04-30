@@ -9,4 +9,8 @@
     <string name="add">Добавить</string>
     <string name="save">Сохранить</string>
     <string name="is_read">Прочитано</string>
+    <string name="stack_spacing">Расстояние между стэками заметок</string>
+    <string name="stack_max_visible">Максимальное видимое количество заметок в стэке</string>
+    <string name="apply_settings">Применить параметры</string>
+    <string name="too_long_title">Слишком длинный заголовок, нужно сократить</string>
 </resources>
